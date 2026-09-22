@@ -1,0 +1,102 @@
+<!--
+════════════════════════════════════════════════════════════════
+  HOW TO INTEGRATE — index.html changes needed
+════════════════════════════════════════════════════════════════
+
+  STEP 1 — Add the scroll indicator just before </body>:
+    (It's fixed-position so placement in DOM doesn't matter,
+     but keeping it near the top of body is cleanest)
+
+  STEP 2 — Paste the .home-scroll section directly after
+    the closing </div> of your .home hero grid.
+
+  STEP 3 — Add to all 3 pages, just before </body>:
+    <script src="transitions.js"></script>
+
+  STEP 4 — Remove or comment out the old scroll listener in app.js
+    that only handled nav scroll tint — transitions.js handles it now.
+    (app.js's nav scroll tint still works fine in parallel.)
+════════════════════════════════════════════════════════════════
+-->
+
+
+<!-- ══ STEP 1: Scroll Indicator (fixed, add near top of body) ══ -->
+<div id="scroll-indicator">
+  <span class="scroll-ind-text">Scroll</span>
+  <div class="scroll-ind-line"></div>
+</div>
+
+
+<!-- ══ STEP 2: Narrative Exit — paste after </div><!-- end .home --> ══ -->
+<section class="home-scroll">
+
+  <!-- Bridge line -->
+  <div class="hs-bridge">
+    <div class="hs-bridge-line"></div>
+    <p class="hs-bridge-text">Selected case studies — IxD Program, 2024–2026</p>
+    <div class="hs-bridge-line" style="background: linear-gradient(270deg, transparent, var(--blush), var(--wing), transparent);"></div>
+  </div>
+
+  <!-- 3-card teaser grid
+       Replace src="" with your actual project screenshots.
+       The large card (first) uses img-bridal.JPG as a placeholder — swap it. -->
+  <div class="hs-grid">
+
+    <!-- Large card — most important project -->
+    <a href="projects.html" class="hs-card">
+      <div class="hs-card-img">
+        <img src="img-park.jpeg" alt="Dreamer.25 — Brand as Environment">
+      </div>
+      <div class="hs-card-body">
+        <div class="hs-card-num">08</div>
+        <div class="hs-card-label">Web · Brand · Immersive / 2025</div>
+        <h3>Dreamer.25 — Brand as Environment</h3>
+        <p>A fashion brand whose digital presence becomes a landscape. Visitors don't browse — they move through it.</p>
+      </div>
+    </a>
+
+    <!-- Medium card -->
+    <a href="projects.html" class="hs-card">
+      <div class="hs-card-img">
+        <img src="img-food.jpeg" alt="Ontario Traveller's Helper">
+      </div>
+      <div class="hs-card-body">
+        <div class="hs-card-num">07</div>
+        <div class="hs-card-label">JavaScript · API / 2025</div>
+        <h3>Ontario Traveller's Helper</h3>
+        <p>One scroll replaces three apps — 7-day forecast and live map unified.</p>
+      </div>
+    </a>
+
+    <!-- Small card -->
+    <a href="projects.html" class="hs-card">
+      <div class="hs-card-img">
+        <img src="img-bridal.JPG" alt="HOOK — F1 Brand Identity">
+      </div>
+      <div class="hs-card-body">
+        <div class="hs-card-num">03</div>
+        <div class="hs-card-label">Brand Identity / 2024</div>
+        <h3>HOOK — Canadian F1 Brand</h3>
+        <p>A logomark that encodes speed and solidarity in a single geometric gesture.</p>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Footer CTA -->
+  <div class="hs-footer">
+    <p class="hs-footer-copy">
+      <strong>20 case studies</strong> across web, brand, fabrication &amp; motion —
+      GPA 3.6 · Sheridan IxD
+    </p>
+    <a href="projects.html" class="hs-cta">
+      <span>View all projects</span>
+      <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+    </a>
+  </div>
+
+</section>
+
+
+<!-- ══ STEP 3: Add this to ALL three pages, just before </body> ══ -->
+<script src="transitions.js"></script>

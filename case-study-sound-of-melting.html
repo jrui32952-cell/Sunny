@@ -1,0 +1,1271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Sound of Melting — Jiarui Yao</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+/* ════════════════════════════════════════
+   TOKENS
+   ════════════════════════════════════════ */
+:root {
+  --cream: #f2ebe0;
+  --blush: #e8a8b0;
+  --peach: #f2c89a;
+  --wing:  #b8cce0;
+  --lilac: #d8c0d8;
+  --ink:   #2a1f1a;
+  --ink2:  #5a4840;
+  --muted: #a08880;
+  --border: rgba(200,176,168,.18);
+
+  /* Project accent — ice · mist · blush */
+  --ice:   #c8e0ee;
+  --frost: #e8f4f8;
+  --pink:  #f0b8c0;
+
+  --scroll: 0;
+  --scroll-p: 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 300;
+  background: var(--cream);
+  color: var(--ink);
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Film grain */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 9998;
+  pointer-events: none; opacity: .045;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* ════════════════════════════════════════
+   CURSOR
+   ════════════════════════════════════════ */
+#cur {
+  width: 7px; height: 7px;
+  background: var(--blush); border-radius: 50%;
+  position: fixed; pointer-events: none; z-index: 9999;
+  transform: translate(-50%,-50%);
+  mix-blend-mode: multiply; transition: transform .15s;
+}
+
+/* ════════════════════════════════════════
+   NAV
+   ════════════════════════════════════════ */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.8rem 4rem;
+  transition: background .4s;
+}
+nav.scrolled {
+  background: rgba(242,235,224,.88);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+.nav-logo {
+  font-family: 'Cormorant', serif;
+  font-size: 1.1rem; font-weight: 700; letter-spacing: .08em;
+  color: var(--ink); text-decoration: none;
+}
+.nav-logo em { font-style: italic; font-weight: 300; color: var(--blush); }
+.nav-back {
+  font-family: 'Space Mono', monospace;
+  font-size: .55rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  display: flex; align-items: center; gap: .5rem;
+  transition: color .2s, gap .2s;
+}
+.nav-back:hover { color: var(--ink); gap: .3rem; }
+
+/* ════════════════════════════════════════
+   HERO — Full viewport with final.png
+   ════════════════════════════════════════ */
+.hero {
+  position: relative;
+  width: 100%; height: 100vh;
+  display: flex; align-items: flex-end;
+  overflow: hidden;
+}
+
+.hero-img {
+  position: absolute; inset: 0;
+  overflow: hidden;
+}
+.hero-img img {
+  width: 100%; height: 100%;
+  object-fit: cover; object-position: center center;
+  display: block;
+  transform: scale(1.04);
+  transition: transform 8s cubic-bezier(.2,.8,.2,1);
+}
+.hero-img img.loaded { transform: scale(1); }
+
+/* Multi-layer overlay: subtle at top, rich gradient at bottom */
+.hero-overlay {
+  position: absolute; inset: 0;
+  background:
+    linear-gradient(to bottom,
+      rgba(242,235,224,.12)  0%,
+      transparent            30%,
+      rgba(42,31,26,.55)    75%,
+      rgba(42,31,26,.88)   100%);
+}
+
+.hero-content {
+  position: relative; z-index: 10;
+  padding: 0 4rem 4.5rem;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: end;
+  gap: 3rem;
+}
+
+.hero-left {}
+
+.hero-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .52rem; letter-spacing: .28em; text-transform: uppercase;
+  color: rgba(200,220,240,.7);
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: 1.2rem;
+}
+.hero-label::before { content: ''; width: 18px; height: 1px; background: var(--ice); }
+
+.hero-title {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(3.5rem, 7.5vw, 8rem);
+  font-weight: 700; line-height: .88; letter-spacing: -.025em;
+  color: #fff; margin-bottom: .5rem;
+}
+.hero-title em {
+  display: block;
+  font-style: italic; font-weight: 300;
+  color: rgba(200,230,245,.88);
+}
+
+.hero-sub {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(1rem, 1.6vw, 1.2rem);
+  font-style: italic; font-weight: 300;
+  color: rgba(242,235,224,.65);
+  margin-top: .8rem;
+}
+
+/* CRI strip */
+.hero-cri {
+  display: flex; flex-direction: column; gap: .4rem;
+  margin-top: 2rem;
+  padding-left: 1rem;
+  border-left: 1px solid rgba(200,220,240,.35);
+}
+.hero-cri-row {
+  display: grid; grid-template-columns: 5rem 1fr;
+  gap: .5rem; align-items: baseline;
+}
+.hero-cri-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ice); opacity: .7;
+}
+.hero-cri-text {
+  font-size: .75rem; line-height: 1.65;
+  color: rgba(242,235,224,.78);
+}
+
+/* Right meta panel */
+.hero-meta {
+  text-align: right;
+  padding-bottom: .2rem;
+}
+.hero-params {
+  font-family: 'Space Mono', monospace;
+  font-size: .5rem; letter-spacing: .14em; text-transform: uppercase;
+  color: rgba(200,220,240,.55);
+  line-height: 2;
+}
+.hero-params strong { color: rgba(242,235,224,.75); font-weight: 400; }
+
+.hero-live {
+  display: inline-flex; align-items: center; gap: .5rem;
+  margin-top: 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .62rem; letter-spacing: .18em; text-transform: uppercase;
+  font-weight: 500; color: #fff;
+  text-decoration: none;
+  border: 1px solid rgba(200,220,240,.45);
+  padding: .65rem 1.4rem;
+  position: relative; overflow: hidden;
+  transition: border-color .3s, color .3s;
+}
+.hero-live::before {
+  content: ''; position: absolute; inset: 0;
+  background: rgba(200,220,240,.18);
+  transform: translateX(-101%);
+  transition: transform .35s cubic-bezier(.76,0,.24,1);
+}
+.hero-live:hover { border-color: rgba(200,220,240,.85); }
+.hero-live:hover::before { transform: translateX(0); }
+.hero-live span, .hero-live svg { position: relative; z-index: 1; }
+.hero-live svg { width: 11px; height: 11px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* Scroll indicator */
+.hero-scroll {
+  position: absolute; bottom: 2rem; left: 50%;
+  transform: translateX(-50%);
+  display: flex; flex-direction: column; align-items: center; gap: .4rem;
+  pointer-events: none; z-index: 10;
+  opacity: 0; animation: fadeIn .8s 1.8s forwards;
+}
+.hero-scroll span {
+  font-family: 'Space Mono', monospace;
+  font-size: .46rem; letter-spacing: .24em; text-transform: uppercase;
+  color: rgba(242,235,224,.4);
+}
+.hero-scroll-line {
+  width: 1px; height: 36px;
+  background: linear-gradient(to bottom, rgba(200,220,240,.5), transparent);
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+@keyframes scrollPulse {
+  0%,100% { transform: scaleY(1); opacity: .5; }
+  50%      { transform: scaleY(.4); opacity: .1; }
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+/* ════════════════════════════════════════
+   SECTION WRAPPER
+   ════════════════════════════════════════ */
+.section {
+  max-width: 1200px; margin: 0 auto;
+  padding: 8rem 4rem;
+  opacity: 0; transform: translateY(40px);
+  transition: opacity .9s cubic-bezier(.22,1,.36,1), transform .9s cubic-bezier(.22,1,.36,1);
+}
+.section.visible { opacity: 1; transform: translateY(0); }
+
+/* Section label */
+.s-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .52rem; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--blush);
+  display: flex; align-items: center; gap: .8rem;
+  margin-bottom: 1rem;
+}
+.s-label::before { content: ''; width: 18px; height: 1px; background: var(--blush); }
+
+/* Divider */
+.divider {
+  width: 100%; height: 1px;
+  background: linear-gradient(90deg, var(--blush), var(--peach), var(--wing), var(--lilac), transparent);
+  margin: 0 auto;
+  max-width: 1200px;
+  padding: 0 4rem;
+  opacity: .4;
+}
+.divider-inner { width: 100%; height: 1px; background: inherit; }
+
+/* ════════════════════════════════════════
+   §1 — PROBLEM STATEMENT
+   ════════════════════════════════════════ */
+.problem {
+  background: linear-gradient(135deg, rgba(200,224,238,.18) 0%, var(--cream) 60%);
+  border-top: 1px solid rgba(200,220,240,.25);
+  border-bottom: 1px solid rgba(200,220,240,.25);
+}
+.problem .section { padding-top: 7rem; padding-bottom: 7rem; }
+
+.problem-quote {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(2.4rem, 5vw, 5rem);
+  font-weight: 300; font-style: italic;
+  line-height: 1.12; letter-spacing: -.02em;
+  color: var(--ink);
+  max-width: 900px;
+  margin-bottom: 3rem;
+  position: relative;
+  padding-left: 2rem;
+}
+.problem-quote::before {
+  content: '"';
+  position: absolute; left: 0; top: -.2em;
+  font-size: 1.2em; color: var(--blush); opacity: .5;
+}
+
+.problem-cols {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+.problem-col-title {
+  font-family: 'Space Mono', monospace;
+  font-size: .55rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--ice); margin-bottom: .8rem;
+  /* use blush since ice is very light on cream bg */
+  color: var(--blush);
+}
+.problem-col p {
+  font-size: .84rem; line-height: 1.95; color: var(--ink2);
+}
+
+/* ════════════════════════════════════════
+   §2 — THREE MODES
+   ════════════════════════════════════════ */
+.modes-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.mode-card {
+  position: relative;
+  padding: 2.4rem 2rem;
+  border: 1px solid var(--border);
+  background: rgba(255,252,248,.6);
+  overflow: hidden;
+  transition: transform .35s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+}
+.mode-card::before {
+  content: ''; position: absolute; top: 0; left: 0;
+  width: 100%; height: 3px;
+}
+.mode-card.smash::before { background: linear-gradient(90deg, var(--blush), var(--pink)); }
+.mode-card.melt::before  { background: linear-gradient(90deg, var(--peach), #f2d4a0); }
+.mode-card.freeze::before { background: linear-gradient(90deg, var(--ice), var(--wing)); }
+
+.mode-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 50px rgba(42,31,26,.1);
+}
+
+.mode-num {
+  font-family: 'Space Mono', monospace;
+  font-size: .5rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--muted); margin-bottom: 1.2rem;
+}
+.mode-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.9rem; font-weight: 700; line-height: 1;
+  color: var(--ink); margin-bottom: .4rem; letter-spacing: -.02em;
+}
+.mode-sub {
+  font-family: 'Cormorant', serif;
+  font-size: 1rem; font-style: italic; font-weight: 300;
+  color: var(--muted); margin-bottom: 1.2rem;
+}
+.mode-body { font-size: .78rem; line-height: 1.85; color: var(--ink2); }
+.mode-tech {
+  margin-top: 1.4rem;
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--muted);
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+/* ════════════════════════════════════════
+   §3 — TECHNICAL EVOLUTION
+   ════════════════════════════════════════ */
+.tech-bg {
+  background: rgba(200,224,238,.08);
+  border-top: 1px solid rgba(200,220,240,.15);
+}
+
+.week-timeline {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 1px; background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 3rem;
+}
+.week-card {
+  background: rgba(255,252,248,.7);
+  padding: 2rem 1.8rem;
+  position: relative; overflow: hidden;
+}
+.week-card::after {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+  height: 3px;
+}
+.week-card:nth-child(1)::after { background: #c8e8d8; }
+.week-card:nth-child(2)::after { background: var(--peach); }
+.week-card:nth-child(3)::after { background: var(--wing); }
+.week-card:nth-child(4)::after { background: var(--lilac); }
+
+.week-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--blush); margin-bottom: .8rem;
+}
+.week-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.5rem; font-weight: 700; line-height: 1.1;
+  color: var(--ink); margin-bottom: .8rem;
+}
+.week-body { font-size: .75rem; line-height: 1.82; color: var(--muted); }
+.week-code {
+  margin-top: 1rem;
+  font-family: 'Space Mono', monospace;
+  font-size: .55rem; line-height: 1.7;
+  color: var(--wing);
+  background: rgba(42,31,26,.04);
+  padding: .8rem; border-radius: 2px;
+}
+
+/* ════════════════════════════════════════
+   §4 — ARTIST REFERENCES
+   ════════════════════════════════════════ */
+.ref-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3rem; margin-top: 3rem;
+}
+.ref-card {
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: 2rem; align-items: start;
+  padding: 2.4rem;
+  border: 1px solid var(--border);
+  background: rgba(255,252,248,.5);
+}
+.ref-card-meta { display: flex; flex-direction: column; gap: .8rem; }
+.ref-artist-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--blush);
+}
+.ref-artist {
+  font-family: 'Cormorant', serif;
+  font-size: 1.6rem; font-weight: 700; line-height: 1.1;
+  color: var(--ink);
+}
+.ref-work {
+  font-family: 'Cormorant', serif;
+  font-size: 1rem; font-style: italic; font-weight: 300;
+  color: var(--muted);
+}
+.ref-points { display: flex; flex-direction: column; gap: 1rem; }
+.ref-point-title {
+  font-size: .72rem; font-weight: 500; color: var(--ink); margin-bottom: .25rem;
+}
+.ref-point-body { font-size: .73rem; line-height: 1.8; color: var(--ink2); }
+.ref-point { padding-left: .8rem; border-left: 2px solid var(--wing); }
+
+/* ════════════════════════════════════════
+   §5 — CHALLENGES & SOLUTIONS
+   ════════════════════════════════════════ */
+.challenges-bg {
+  background: linear-gradient(180deg, var(--cream) 0%, rgba(240,200,200,.08) 100%);
+}
+.challenge-grid {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 2rem; margin-top: 3rem;
+}
+.challenge-card {
+  padding: 2.2rem 2.4rem;
+  border: 1px solid var(--border);
+  background: rgba(255,252,248,.6);
+  position: relative; overflow: hidden;
+}
+.challenge-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 3px; background: var(--blush);
+}
+.challenge-num {
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--blush); margin-bottom: .7rem;
+}
+.challenge-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.3rem; font-weight: 700; line-height: 1.15;
+  color: var(--ink); margin-bottom: .2rem;
+}
+.challenge-sub {
+  font-family: 'Cormorant', serif;
+  font-size: .9rem; font-style: italic; font-weight: 300;
+  color: var(--muted); margin-bottom: 1.2rem;
+}
+.challenge-problem {
+  font-size: .74rem; line-height: 1.82; color: var(--ink2);
+  margin-bottom: 1rem; padding-bottom: 1rem;
+  border-bottom: 1px dashed var(--border);
+}
+.challenge-solution {
+  font-size: .74rem; line-height: 1.82;
+  color: #5a7a5a;
+  padding-left: .8rem; border-left: 2px solid rgba(90,122,90,.3);
+}
+.challenge-solution::before {
+  content: 'Solution  ';
+  font-family: 'Space Mono', monospace;
+  font-size: .46rem; letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(90,122,90,.7);
+}
+
+/* ════════════════════════════════════════
+   §6 — KEY DECISION
+   ════════════════════════════════════════ */
+.decision-bg {
+  background: linear-gradient(135deg,
+    rgba(184,204,224,.15) 0%, var(--cream) 50%, rgba(216,192,216,.12) 100%);
+  border-top: 1px solid rgba(184,204,224,.2);
+}
+.decision-layout {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 5rem; align-items: center;
+}
+.decision-left {}
+.decision-title {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(2rem, 4vw, 3.8rem);
+  font-weight: 700; line-height: .92; letter-spacing: -.02em;
+  color: var(--ink); margin-bottom: 1.8rem;
+}
+.decision-title em { color: var(--wing); font-style: italic; font-weight: 300; }
+
+.decision-body { font-size: .84rem; line-height: 1.95; color: var(--ink2); margin-bottom: 2rem; }
+
+.decision-pullquote {
+  font-family: 'Cormorant', serif;
+  font-size: 1.4rem; font-style: italic; font-weight: 300;
+  line-height: 1.4; color: var(--ink);
+  padding: 1.5rem 2rem;
+  border-left: 3px solid var(--wing);
+  background: rgba(184,204,224,.1);
+  margin-top: 1.5rem;
+}
+
+.decision-right {}
+.decision-compare {
+  display: flex; flex-direction: column; gap: 1px;
+  background: var(--border); border: 1px solid var(--border);
+}
+.dc-row {
+  display: grid; grid-template-columns: .6fr 1fr 1fr;
+  gap: 1px; background: var(--border);
+}
+.dc-cell {
+  background: rgba(255,252,248,.7);
+  padding: 1.2rem 1.4rem;
+  font-size: .72rem; line-height: 1.7;
+}
+.dc-cell.header {
+  font-family: 'Space Mono', monospace;
+  font-size: .48rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--muted); padding: .8rem 1.4rem;
+}
+.dc-cell.label {
+  font-family: 'Space Mono', monospace;
+  font-size: .5rem; letter-spacing: .12em; text-transform: uppercase;
+  color: var(--ink2); background: rgba(242,235,224,.5);
+}
+.dc-cell.option-b { background: rgba(184,204,224,.12); color: var(--ink2); }
+.dc-cell.chosen {
+  background: rgba(184,204,224,.22); color: var(--ink);
+  font-weight: 400;
+}
+.dc-chosen-badge {
+  font-family: 'Space Mono', monospace;
+  font-size: .44rem; letter-spacing: .16em; text-transform: uppercase;
+  color: var(--wing); display: block; margin-top: .3rem;
+}
+
+/* ════════════════════════════════════════
+   §7 — ITERATION SEQUENCE
+   ════════════════════════════════════════ */
+.iter-strip {
+  display: flex; gap: 0; overflow-x: auto;
+  margin-top: 3rem; scrollbar-width: none;
+  border: 1px solid var(--border);
+}
+.iter-strip::-webkit-scrollbar { display: none; }
+.iter-step {
+  flex: 0 0 auto; min-width: 200px;
+  padding: 1.6rem 1.8rem;
+  border-right: 1px solid var(--border);
+  background: rgba(255,252,248,.6);
+  position: relative;
+}
+.iter-step:last-child { border-right: none; }
+.iter-step::before {
+  content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+}
+.iter-step:nth-child(1)::before { background: #c8e8d8; }
+.iter-step:nth-child(2)::before { background: #d4d8e8; }
+.iter-step:nth-child(3)::before { background: var(--peach); }
+.iter-step:nth-child(4)::before { background: var(--blush); }
+.iter-step:nth-child(5)::before { background: var(--peach); }
+.iter-step:nth-child(6)::before { background: var(--wing); }
+
+.iter-tag {
+  font-family: 'Space Mono', monospace;
+  font-size: .46rem; letter-spacing: .18em; text-transform: uppercase;
+  color: var(--blush); margin-bottom: .6rem;
+}
+.iter-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: .4rem;
+}
+.iter-body { font-size: .68rem; line-height: 1.75; color: var(--muted); }
+
+/* ════════════════════════════════════════
+   §8 — REFLECTION
+   ════════════════════════════════════════ */
+.refl-cols {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 3rem; margin-top: 3rem;
+}
+.refl-col-title {
+  font-family: 'Cormorant', serif;
+  font-size: 1.4rem; font-weight: 700; color: var(--ink);
+  margin-bottom: 1.5rem;
+}
+.refl-list {
+  list-style: none;
+  display: flex; flex-direction: column; gap: .9rem;
+}
+.refl-list li {
+  font-size: .78rem; line-height: 1.8; color: var(--ink2);
+  padding-left: 1.2rem; position: relative;
+}
+.refl-list li::before {
+  content: '·';
+  position: absolute; left: 0;
+  color: var(--blush); font-weight: 700;
+}
+
+/* ════════════════════════════════════════
+   §9 — CTA / LIVE PROJECT
+   ════════════════════════════════════════ */
+.cta-section {
+  background: var(--ink);
+  padding: 7rem 4rem;
+  text-align: center;
+}
+.cta-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .52rem; letter-spacing: .3em; text-transform: uppercase;
+  color: rgba(200,220,240,.5); margin-bottom: 1.5rem;
+}
+.cta-title {
+  font-family: 'Cormorant', serif;
+  font-size: clamp(2.5rem, 5vw, 5rem);
+  font-weight: 300; font-style: italic;
+  color: rgba(242,235,224,.95); line-height: 1.05;
+  margin-bottom: 3rem;
+}
+.cta-title strong { font-weight: 700; font-style: normal; }
+.cta-btn {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: .7rem; letter-spacing: .18em; text-transform: uppercase;
+  font-weight: 500; color: var(--ink);
+  background: rgba(200,220,240,.88);
+  text-decoration: none;
+  padding: 1rem 2.8rem;
+  transition: background .28s;
+}
+.cta-btn:hover { background: #fff; }
+.cta-btn svg { width: 12px; height: 12px; stroke: currentColor; fill: none; stroke-width: 2; }
+
+/* ════════════════════════════════════════
+   BOTTOM NAV
+   ════════════════════════════════════════ */
+.bottom-nav {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 3rem 4rem;
+  border-top: 1px solid var(--border);
+  max-width: none;
+}
+.bottom-nav-link {
+  font-family: 'Space Mono', monospace;
+  font-size: .52rem; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none;
+  display: flex; align-items: center; gap: .5rem;
+  transition: color .2s, gap .2s;
+}
+.bottom-nav-link:hover { color: var(--ink); }
+.bottom-nav-link.prev:hover { gap: .3rem; }
+.bottom-nav-link.next:hover { gap: .7rem; }
+.bottom-nav-center {
+  font-family: 'Space Mono', monospace;
+  font-size: .46rem; letter-spacing: .18em; text-transform: uppercase;
+  color: rgba(160,136,128,.4);
+}
+
+/* ════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════ */
+@media (max-width: 900px) {
+  nav { padding: 1.4rem 1.5rem; }
+  .hero-content { grid-template-columns: 1fr; padding: 0 1.5rem 3.5rem; }
+  .hero-meta { text-align: left; }
+  .section { padding: 5rem 1.5rem; }
+  .problem-cols, .ref-grid, .challenge-grid,
+  .decision-layout, .refl-cols { grid-template-columns: 1fr; gap: 2rem; }
+  .ref-card { grid-template-columns: 1fr; }
+  .week-timeline { grid-template-columns: 1fr 1fr; }
+  .modes-grid { grid-template-columns: 1fr; }
+  .dc-row { grid-template-columns: 1fr; }
+  .bottom-nav { padding: 2rem 1.5rem; }
+  .cta-section { padding: 5rem 1.5rem; }
+}
+</style>
+</head>
+<body>
+
+<div id="cur"></div>
+
+<!-- ══ NAV ══ -->
+<nav id="nav">
+  <a href="index.html" class="nav-logo">Jiarui <em>Yao</em></a>
+  <a href="projects.html" class="nav-back">
+    ← Back to Projects
+  </a>
+</nav>
+
+<!-- ════════════════════════════════════════
+     §0 · HERO
+     ════════════════════════════════════════ -->
+<section class="hero" id="hero">
+  <div class="hero-img">
+    <img src="imag/project/10.png" alt="The Sound of Melting — interface screenshot" id="heroImg">
+  </div>
+  <div class="hero-overlay"></div>
+
+  <div class="hero-content">
+    <div class="hero-left">
+      <div class="hero-label">DESN 22848 · Interaction Design: Media, Motion &amp; the Body · 2025–2026</div>
+
+      <h1 class="hero-title">
+        The Sound
+        <em>of Melting</em>
+      </h1>
+      <p class="hero-sub">Three sound experiments · Choose yours</p>
+
+      <div class="hero-cri">
+        <div class="hero-cri-row">
+          <span class="hero-cri-label">Context</span>
+          <span class="hero-cri-text">How do you make a user's voice feel like a physical force — not a button press, but a field of energy that transforms matter?</span>
+        </div>
+        <div class="hero-cri-row">
+          <span class="hero-cri-label">Role</span>
+          <span class="hero-cri-text">Sole designer & developer — concept, physics engine, P5.js implementation, UI design, and interaction choreography.</span>
+        </div>
+        <div class="hero-cri-row">
+          <span class="hero-cri-label">Impact</span>
+          <span class="hero-cri-text">Three distinct interaction contracts — explosive / cumulative / inversion — each mapping a different physical law onto the microphone.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-meta">
+      <div class="hero-params">
+        <strong>Tool</strong> &nbsp;P5.js · p5.sound<br>
+        <strong>Tech</strong> &nbsp;HTML / CSS / JS<br>
+        <strong>Course</strong> DESN 22848<br>
+        <strong>Year</strong> &nbsp;2025–2026<br>
+        <strong>Type</strong> &nbsp;Individual Project
+      </div>
+      <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" class="hero-live">
+        <span>View Live Project</span>
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+
+  <div class="hero-scroll">
+    <span>Read Case Study</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+
+<!-- ════════════════════════════════════════
+     §1 · PROBLEM STATEMENT
+     ════════════════════════════════════════ -->
+<div class="problem">
+  <div class="section" data-reveal>
+    <div class="s-label">Design Statement</div>
+    <p class="problem-quote">Voice is not a trigger — it is a force.</p>
+    <div class="problem-cols">
+      <div>
+        <div class="problem-col-title">The Question</div>
+        <p>Interaction design usually treats sound as a command — a button press made audible. What if we inverted that relationship? What if the microphone became a force transducer, and the user's voice became a physical field capable of transforming material states?</p>
+        <br>
+        <p>Ice cream served as the ideal interaction medium: familiar, affectionate, universally understood — and subject to three distinct state changes. Smash (solid rupture), Melt (liquid flow), Freeze (crystallisation). Each state has its own physics. Each physics has its own relationship to sound.</p>
+      </div>
+      <div>
+        <div class="problem-col-title">The Framework</div>
+        <p>Four sound dimensions from lecture structured the design logic: <strong>physiological</strong> (body-as-input — the microphone reads the user's physical presence), <strong>cognitive</strong> (visual causality — the scoop explodes because you screamed, and you understand this instantly), <strong>emotional</strong> (the ice cream is a comfort object, held under vocal stress), and <strong>behavioural</strong> (each mode shapes a distinct interaction loop through unique physics parameters).</p>
+        <br>
+        <p>The goal was not to build a fun toy. It was to build a precise instrument — one that made the relationship between sound and physical change both legible and expressive.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §2 · THREE MODES
+     ════════════════════════════════════════ -->
+<div class="section" data-reveal>
+  <div class="s-label">Interaction System</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(2rem,4vw,3.5rem);font-weight:700;line-height:.92;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+    Three modes.<br><em style="font-style:italic;font-weight:300;color:var(--blush);">Three physical laws.</em>
+  </h2>
+  <p style="font-size:.82rem;line-height:1.9;color:var(--muted);max-width:600px;margin-top:1rem;">
+    Same P5.js engine. Same ice cream form. Three completely different physics tables — each one mapping a different relationship between the user's voice and the material state of the scoop.
+  </p>
+
+  <div class="modes-grid">
+
+    <div class="mode-card smash">
+      <div class="mode-num">Mode 01</div>
+      <div class="mode-title">Smash It</div>
+      <div class="mode-sub">Yell, clap, or scream at it</div>
+      <p class="mode-body">Solid rupture — voice energy explodes the scoop outward radially. The louder the sound, the further each of the 65 circles flies from the origin. Spring physics pulls them back when silence returns. The interaction contract is <strong>explosive and instant</strong> — cause and effect are simultaneous.</p>
+      <div class="mode-tech">boom force 32 · spring 0.078 · radial displacement · instantaneous response</div>
+    </div>
+
+    <div class="mode-card melt">
+      <div class="mode-num">Mode 02</div>
+      <div class="mode-title">Melt It</div>
+      <div class="mode-sub">Heat melts everything</div>
+      <p class="mode-body">Liquid flow — sustained sound accumulates as heat, causing the scoop to droop downward over time. meltDroop increases cumulatively. Stop talking and the droop slows — but it doesn't immediately reverse. The contract is <strong>cumulative and irreversible</strong> — sound leaves a physical trace.</p>
+      <div class="mode-tech">meltDroop accumulation · gravity sag · heat waves · lerp 0.016 → 0.04</div>
+    </div>
+
+    <div class="mode-card freeze">
+      <div class="mode-num">Mode 03</div>
+      <div class="mode-title">Freeze It</div>
+      <div class="mode-sub">Crystallise it with sound</div>
+      <p class="mode-body">Inversion — silence turns colour to grey; sound restores it. The scoop is permanently frozen in stasis. Only your voice can bring colour back — but the moment you stop, it crystallises again. The contract is <strong>inverted</strong> — silence is the active state, sound is the interruption.</p>
+      <div class="mode-tech">colorAmt lerp · grayVal 125 · silence = change · inversion logic</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §3 · TECHNICAL EVOLUTION
+     ════════════════════════════════════════ -->
+<div class="tech-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Technical Research</div>
+    <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+      P5.js Sound Library — Weekly Evolution
+    </h2>
+    <p style="font-size:.8rem;line-height:1.9;color:var(--muted);max-width:560px;margin-top:.8rem;">
+      Each week introduced a new primitive. The final project is the integration of all four, linked through a live microphone input.
+    </p>
+
+    <div class="week-timeline">
+
+      <div class="week-card">
+        <div class="week-tag">Week 5 · First Contact</div>
+        <div class="week-title">Volume → Scale</div>
+        <p class="week-body">getLevel() mapped to ellipse radius. Quiet room → small dot; scream → large burst. Foundational volume-to-scale mapping. Proof that sound could drive geometry.</p>
+        <div class="week-code">amplitude.getLevel()<br>→ ellipse(x, y, level)</div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-tag">Week 6 · Waveform & FFT</div>
+        <div class="week-title">Shape of Sound</div>
+        <p class="week-body">fft.waveform() replaces single-value. 512 data points → 512 positions. Sound is a time-series with shape, not just a single amplitude number.</p>
+        <div class="week-code">fft.waveform()<br>→ 512 position array</div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-tag">Week 7 · Physics Engine</div>
+        <div class="week-title">Spring Forces</div>
+        <p class="week-body">Each point gains origin, position, velocity, and damping. micLevel drives the boom force — amplitude as vector, not scale. Geometry now has mass and memory.</p>
+        <div class="week-code">applyForce(dx, dy)<br>spring · damping<br>p.vx += _spring</div>
+      </div>
+
+      <div class="week-card">
+        <div class="week-tag">Final · Integration</div>
+        <div class="week-title">Three Modes</div>
+        <p class="week-body">Same methods across all three modes. Modes differ only by their physics lookup table: spring constant, damping coefficient, droop rate. One engine, three behaviours.</p>
+        <div class="week-code">SKETCH_MODE = 1|2|3<br>physics lookup table<br>Smash · Melt · Freeze</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §4 · ARTIST REFERENCES
+     ════════════════════════════════════════ -->
+<div class="section" data-reveal>
+  <div class="s-label">Conceptual Framework</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+    Artist References
+  </h2>
+  <p style="font-size:.8rem;line-height:1.9;color:var(--muted);max-width:560px;margin-top:.8rem;">
+    Two works defined the conceptual territory — not as stylistic references, but as structural models for how sound becomes physical transformation.
+  </p>
+
+  <div class="ref-grid">
+    <div class="ref-card">
+      <div class="ref-card-meta">
+        <div class="ref-artist-label">Artist Reference 01</div>
+        <div class="ref-artist">Bill Viola</div>
+        <div class="ref-work">The Messenger, 1996</div>
+      </div>
+      <div class="ref-points">
+        <div class="ref-point">
+          <div class="ref-point-title">Body as Transformation Site</div>
+          <p class="ref-point-body">Viola treats the body as a site of physical state change. This project inherits the logic: the ice cream form undergoes transformation driven by vocal energy.</p>
+        </div>
+        <div class="ref-point">
+          <div class="ref-point-title">Looping as Interaction Structure</div>
+          <p class="ref-point-body">The Messenger has no fixed beginning or end. Sound of Melting similarly has no scripted sequence — the user enters, disturbs the form, and the system returns to stillness.</p>
+        </div>
+        <div class="ref-point">
+          <div class="ref-point-title">Sound as Physical Force</div>
+          <p class="ref-point-body">Volume is not metaphor — it is vector force applied to position. amplitude.getLevel() becomes the boom variable that pushes geometry outward.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="ref-card">
+      <div class="ref-card-meta">
+        <div class="ref-artist-label">Artist Reference 02</div>
+        <div class="ref-artist">Granular-Synthesis</div>
+        <div class="ref-work">Modell 5, 1994</div>
+      </div>
+      <div class="ref-points">
+        <div class="ref-point">
+          <div class="ref-point-title">Granular Architecture</div>
+          <p class="ref-point-body">The ice cream scoop is built from 65 overlapping semi-transparent circles. Form emerges from collective overlap — no individual circle IS the scoop. Directly from Hentschläger & Langheinrich.</p>
+        </div>
+        <div class="ref-point">
+          <div class="ref-point-title">Intensity as Aesthetic Goal</div>
+          <p class="ref-point-body">High amplitude is the aesthetic condition aimed toward. A whisper → gentle displacement; a scream → maximum radial explosion. Volume is intention, not incidence.</p>
+        </div>
+        <div class="ref-point">
+          <div class="ref-point-title">Repetition with Variation</div>
+          <p class="ref-point-body">Each burst particle follows identical physics rules but departs at a unique angle — never identical across two interactions, yet always unmistakably the same system.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §5 · CHALLENGES & SOLUTIONS
+     ════════════════════════════════════════ -->
+<div class="challenges-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Challenges &amp; Solutions</div>
+    <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+      Four problems.<br><em style="font-style:italic;font-weight:300;color:var(--blush);">Four precise fixes.</em>
+    </h2>
+
+    <div class="challenge-grid">
+
+      <div class="challenge-card">
+        <div class="challenge-num">Challenge 01</div>
+        <div class="challenge-title">Inverted Cone Geometry</div>
+        <div class="challenge-sub">Bottom wider than top</div>
+        <div class="challenge-problem">The thirteen layer rectangles were drawn with widths proportional to index from scoop downward — but index direction was reversed. The cone appeared upside-down.</div>
+        <div class="challenge-solution">Inverted the layer index so layer 0 (top) is widest, layer 12 narrowest. Rewrote <code>xOffset = (maxWidth - layerWidth)/2</code>.</div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-num">Challenge 02</div>
+        <div class="challenge-title">Smash Particles Too Compact</div>
+        <div class="challenge-sub">Effect not visible</div>
+        <div class="challenge-problem">Initial burst produced a tight cluster. All 65 circles displaced by the same small radial force (set to 8) — indistinguishable from the resting state. The explosion was invisible.</div>
+        <div class="challenge-solution">Increased boom force from 8 → 32, applied directionally (dx/d × force). Spring coefficient tuned 0.12 → 0.078 to slow the return and sustain the explosion.</div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-num">Challenge 03</div>
+        <div class="challenge-title">Hint Text Off-Screen</div>
+        <div class="challenge-sub">cy − R × 1.42 renders below zero</div>
+        <div class="challenge-problem">Hint positioned at cy − R×1.42 produced y &lt; 0 on all canvas sizes. No visual error thrown when drawString renders outside bounds — silent failure on every viewport.</div>
+        <div class="challenge-solution">Multiplier changed 1.42 → 0.62. Hint lifetime extended 7s → 12s. Threshold raised 0.012 → 0.018 to avoid false triggers in quiet rooms.</div>
+      </div>
+
+      <div class="challenge-card">
+        <div class="challenge-num">Challenge 04</div>
+        <div class="challenge-title">Freeze Scoop Invisible</div>
+        <div class="challenge-sub">grayVal=231 too close to background</div>
+        <div class="challenge-problem">Frozen desaturation (grayVal=231) was too close to Mode 3's pale blue background. The core interaction contract — silence=grey / sound=colour — was completely unreadable.</div>
+        <div class="challenge-solution">grayVal reduced to 125 (mid-grey). colorAmt lerp adjusted so micLevel 0.010–0.030 produces a noticeable colour shift. Contrast restored; contract legible.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §6 · KEY DESIGN DECISION
+     ════════════════════════════════════════ -->
+<div class="decision-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Key Decision</div>
+    <div class="decision-layout">
+      <div class="decision-left">
+        <h2 class="decision-title">Why <em>silence</em> became the design breakthrough</h2>
+        <p class="decision-body">Smash and Melt both followed the intuitive model: sound = change. Louder = more effect. This is the expected interaction contract — it feels satisfying because it confirms our physical intuitions about force.</p>
+        <p class="decision-body">Freeze inverted this entirely. The discovery came from a negative space: what if the active state was silence? What if sound was the interruption, not the cause? The frozen scoop crystallises in stillness and momentarily recovers colour only when you speak — then crystallises again the moment you stop.</p>
+        <div class="decision-pullquote">The Freeze mode's inversion logic — silence produces visual change, not sound — was the most conceptually significant discovery of the project.</div>
+      </div>
+
+      <div class="decision-right">
+        <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-bottom:1rem;">Design Comparison — Freeze Mode Logic</div>
+        <div class="decision-compare">
+          <div class="dc-row">
+            <div class="dc-cell header"></div>
+            <div class="dc-cell header">Option A — Sound = Change</div>
+            <div class="dc-cell header">Option B — Silence = Change ✓</div>
+          </div>
+          <div class="dc-row">
+            <div class="dc-cell label">Active State</div>
+            <div class="dc-cell option-b">Speaking is the active input</div>
+            <div class="dc-cell chosen">Silence is the active state <span class="dc-chosen-badge">→ chosen</span></div>
+          </div>
+          <div class="dc-row">
+            <div class="dc-cell label">Interaction Contract</div>
+            <div class="dc-cell option-b">Confirms physical intuition</div>
+            <div class="dc-cell chosen">Inverts physical intuition — conceptually richer</div>
+          </div>
+          <div class="dc-row">
+            <div class="dc-cell label">Behavioural Effect</div>
+            <div class="dc-cell option-b">User shouts to freeze</div>
+            <div class="dc-cell chosen">User holds breath to freeze — body as input</div>
+          </div>
+          <div class="dc-row">
+            <div class="dc-cell label">Referent</div>
+            <div class="dc-cell option-b">Standard sound-reactive UI</div>
+            <div class="dc-cell chosen">John Cage — 4'33" — silence as event</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §7 · ITERATION SEQUENCE
+     ════════════════════════════════════════ -->
+<div class="section" data-reveal>
+  <div class="s-label">Iteration Sequence</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+    Template → Final
+  </h2>
+  <div class="iter-strip">
+    <div class="iter-step">
+      <div class="iter-tag">Week 5</div>
+      <div class="iter-title">Week 5 Template</div>
+      <p class="iter-body">Green prototype. Volume mapped to dot size. Proof of concept — amplitude.getLevel() working.</p>
+    </div>
+    <div class="iter-step">
+      <div class="iter-tag">Week 6</div>
+      <div class="iter-title">Circles + Base</div>
+      <p class="iter-body">Scoop emerging. 65 overlapping circles. Cone attached. First coherent ice cream form.</p>
+    </div>
+    <div class="iter-step">
+      <div class="iter-tag">Week 7</div>
+      <div class="iter-title">Smash Force Tuned</div>
+      <p class="iter-body">Pink scoop live. Spring physics added. Boom force calibrated. Explosion visible for the first time.</p>
+    </div>
+    <div class="iter-step">
+      <div class="iter-tag">Week 8</div>
+      <div class="iter-title">Smash Explosion</div>
+      <p class="iter-body">Boom particles fully directional. Radial spring return smooth. Cone V1 linked to scoop position.</p>
+    </div>
+    <div class="iter-step">
+      <div class="iter-tag">Week 9</div>
+      <div class="iter-title">Melt Waves</div>
+      <p class="iter-body">meltDroop accumulation working. Heat wave visual layer. Cumulative mode contract established.</p>
+    </div>
+    <div class="iter-step">
+      <div class="iter-tag">Final</div>
+      <div class="iter-title">Freeze + Landing</div>
+      <p class="iter-body">Inversion logic complete. Landing page with mode cards. All three physics tables live. Deployed.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §8 · REFLECTION
+     ════════════════════════════════════════ -->
+<div class="section" data-reveal style="padding-top:0;">
+  <div class="s-label">Reflection</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+    What I Learned
+  </h2>
+  <div class="refl-cols">
+    <div>
+      <div class="refl-col-title" style="font-family:'Cormorant',serif;">Technical</div>
+      <ul class="refl-list">
+        <li>P5.js audio pipeline: AudioIn, Amplitude, FFT, and the browser gesture unlock requirement for Web Audio API.</li>
+        <li>Physics-based Mover class: applyForce(), spring return, and voice-driven vector displacement as a design tool.</li>
+        <li>Multi-mode state management: one sketch.js, three completely different behaviours via lookup tables — not conditional spaghetti.</li>
+        <li>Debugging real-time audio: inaudible thresholds, off-screen element rendering failures, contrast on live canvas.</li>
+        <li>Amplitude smoothing at 0.50 adds ~100ms latency — a tradeoff between responsiveness and noise sensitivity.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="refl-col-title" style="font-family:'Cormorant',serif;">Design</div>
+      <ul class="refl-list">
+        <li>Sound is a design material with the same specificity as colour or form — it can be tuned, calibrated, and choreographed.</li>
+        <li>The three interaction contracts (explosive / cumulative / inversion) proved that a single physical medium can support radically different emotional registers.</li>
+        <li>Parameter shift is both technical and aesthetic — inseparable from code. The spring constant is also a feeling.</li>
+        <li>The landing page IS interaction design: mode cards reduce pre-audio cognitive load and prime the user's physical behaviour before they interact.</li>
+        <li>Next: Melt-to-Freeze transition (silence after full melt triggers recrystallisation), mobile gesture input, and FFT band analysis for pitch-specific effects.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     §9 · LIVE PROJECT CTA
+     ════════════════════════════════════════ -->
+<div class="cta-section">
+  <div class="cta-label">Final Result</div>
+  <h2 class="cta-title">
+    <strong>The Sound of Melting</strong><br>
+    is live. Make a sound.
+  </h2>
+  <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" class="cta-btn">
+    Open Project
+    <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     BOTTOM NAV
+     ════════════════════════════════════════ -->
+<div class="bottom-nav">
+  <a href="projects.html" class="bottom-nav-link prev">
+    ← All Projects
+  </a>
+  <span class="bottom-nav-center">DESN 22848 · Jiarui Yao · 2025–2026</span>
+  <a href="projects.html" class="bottom-nav-link next">
+    Next Case Study →
+  </a>
+</div>
+
+
+<script>
+/* ════════════════════════════════════════
+   PHYSICS ENGINE
+   ════════════════════════════════════════ */
+(function () {
+  function broadcast() {
+    const y = window.scrollY;
+    const max = document.body.scrollHeight - window.innerHeight;
+    document.documentElement.style.setProperty('--scroll', y);
+    document.documentElement.style.setProperty('--scroll-p', max > 0 ? y / max : 0);
+  }
+  window.addEventListener('scroll', broadcast, { passive: true });
+  broadcast();
+})();
+
+/* ════════════════════════════════════════
+   HERO IMAGE — lens zoom on load
+   ════════════════════════════════════════ */
+const heroImg = document.getElementById('heroImg');
+if (heroImg.complete) {
+  setTimeout(() => heroImg.classList.add('loaded'), 100);
+} else {
+  heroImg.addEventListener('load', () => heroImg.classList.add('loaded'));
+}
+
+/* ════════════════════════════════════════
+   DOT CURSOR
+   ════════════════════════════════════════ */
+const cur = document.getElementById('cur');
+document.addEventListener('mousemove', e => {
+  cur.style.left = e.clientX + 'px';
+  cur.style.top  = e.clientY + 'px';
+});
+document.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('mouseenter', () => cur.style.transform = 'translate(-50%,-50%) scale(2.2)');
+  el.addEventListener('mouseleave', () => cur.style.transform = 'translate(-50%,-50%) scale(1)');
+});
+
+/* ════════════════════════════════════════
+   NAV SCROLL TINT
+   ════════════════════════════════════════ */
+window.addEventListener('scroll', () => {
+  document.getElementById('nav').classList.toggle('scrolled', scrollY > 40);
+}, { passive: true });
+
+/* ════════════════════════════════════════
+   SECTION REVEAL — IntersectionObserver
+   ════════════════════════════════════════ */
+const revealObs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      revealObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+document.querySelectorAll('[data-reveal]').forEach(el => revealObs.observe(el));
+
+/* ════════════════════════════════════════
+   LIQUID VEIL — Page Transition
+   ════════════════════════════════════════ */
+(function () {
+  const veil = document.createElement('div');
+  Object.assign(veil.style, {
+    position: 'fixed', inset: '0', zIndex: '99999',
+    background: '#f2ebe0', transformOrigin: 'top center',
+    transform: 'translateY(0)',
+    transition: 'transform 0.72s cubic-bezier(0.76,0,0.24,1)',
+    pointerEvents: 'none',
+  });
+  const sh = document.createElement('div');
+  Object.assign(sh.style, {
+    position: 'absolute', inset: '0',
+    background: 'linear-gradient(135deg,rgba(200,224,238,.22) 0%,transparent 45%,rgba(216,192,216,.15) 100%)',
+  });
+  veil.appendChild(sh);
+  document.body.prepend(veil);
+
+  veil.getBoundingClientRect();
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    veil.style.transform = 'translateY(-100%)';
+  }));
+
+  let navigating = false;
+  document.addEventListener('click', e => {
+    const link = e.target.closest('a[href]');
+    if (!link || navigating) return;
+    const href = link.getAttribute('href');
+    if (!href || href === '#' || href.startsWith('#') || href.startsWith('http') || link.target === '_blank') return;
+    e.preventDefault();
+    navigating = true;
+    veil.style.transition = 'transform 0.58s cubic-bezier(0.76,0,0.24,1)';
+    veil.style.transform = 'translateY(0)';
+    setTimeout(() => { window.location.href = href; }, 580);
+  });
+})();
+</script>
+</body>
+</html>

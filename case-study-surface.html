@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Surface — The Winter Snow Globe · Jiarui Yao</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f2ebe0;--blush:#e8a8b0;--peach:#f2c89a;--wing:#b8cce0;
+  --lilac:#d8c0d8;--ink:#2a1f1a;--ink2:#5a4840;--muted:#a08880;
+  --border:rgba(200,176,168,.18);--glass:rgba(242,235,224,.72);
+  /* Project accent — winter ice */
+  --ice:#c8dff0;--night:#1a2535;--frost:rgba(200,223,240,.15);
+  --scroll:0;--scroll-p:0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--cream);color:var(--ink);overflow-x:hidden;cursor:none;}
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");background-size:256px 256px;}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 60% at 20% 0%,rgba(184,204,224,.35) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 40%,rgba(216,192,216,.22) 0%,transparent 55%),radial-gradient(ellipse 55% 50% at 50% 100%,rgba(200,220,240,.2) 0%,transparent 55%);background-color:var(--cream);}
+
+#cur{width:7px;height:7px;background:var(--wing);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:transform .15s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.8rem 4rem;transition:background .4s;}
+nav.scrolled{background:rgba(242,235,224,.88);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Cormorant',serif;font-size:1.1rem;font-weight:700;letter-spacing:.08em;color:var(--ink);text-decoration:none;}
+.nav-logo em{font-style:italic;font-weight:300;color:var(--blush);}
+.nav-back{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s,gap .2s;}
+.nav-back:hover{color:var(--ink);gap:.3rem;}
+
+/* HERO */
+.hero{position:relative;width:100%;height:100vh;display:flex;align-items:flex-end;overflow:hidden;}
+.hero-img{position:absolute;inset:0;overflow:hidden;}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 40%;display:block;transform:scale(1.04);transition:transform 8s cubic-bezier(.2,.8,.2,1);}
+.hero-img img.loaded{transform:scale(1);}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(26,37,53,.15) 0%,transparent 30%,rgba(26,37,53,.6) 75%,rgba(26,37,53,.92) 100%);}
+.hero-content{position:relative;z-index:10;padding:0 4rem 4.5rem;width:100%;display:grid;grid-template-columns:1fr auto;align-items:end;gap:3rem;}
+.hero-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(200,223,240,.7);display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;}
+.hero-label::before{content:'';width:18px;height:1px;background:var(--ice);}
+.hero-title{font-family:'Cormorant',serif;font-size:clamp(3.5rem,7.5vw,8rem);font-weight:700;line-height:.88;letter-spacing:-.025em;color:#fff;margin-bottom:.5rem;}
+.hero-title em{display:block;font-style:italic;font-weight:300;color:rgba(200,223,240,.88);}
+.hero-sub{font-family:'Cormorant',serif;font-size:clamp(1rem,1.6vw,1.2rem);font-style:italic;font-weight:300;color:rgba(242,235,224,.6);margin-top:.8rem;}
+.hero-cri{display:flex;flex-direction:column;gap:.4rem;margin-top:2rem;padding-left:1rem;border-left:1px solid rgba(200,223,240,.3);}
+.hero-cri-row{display:grid;grid-template-columns:5rem 1fr;gap:.5rem;align-items:baseline;}
+.hero-cri-label{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ice);opacity:.7;}
+.hero-cri-text{font-size:.75rem;line-height:1.65;color:rgba(242,235,224,.78);}
+.hero-meta{text-align:right;padding-bottom:.2rem;}
+.hero-params{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,223,240,.5);line-height:2;}
+.hero-params strong{color:rgba(242,235,224,.72);font-weight:400;}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;pointer-events:none;z-index:10;opacity:0;animation:fadeIn .8s 1.8s forwards;}
+.hero-scroll span{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(242,235,224,.4);}
+.hero-scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(200,223,240,.5),transparent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scaleY(1);opacity:.5;}50%{transform:scaleY(.4);opacity:.1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* SECTIONS */
+.section{max-width:1200px;margin:0 auto;padding:8rem 4rem;opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);}
+.section.visible{opacity:1;transform:translateY(0);}
+.s-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--wing);display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;}
+.s-label::before{content:'';width:18px;height:1px;background:var(--wing);}
+
+/* CONCEPT PULLQUOTE */
+.concept-bg{background:linear-gradient(135deg,rgba(184,204,224,.14) 0%,var(--cream) 60%);border-top:1px solid rgba(184,204,224,.2);border-bottom:1px solid rgba(184,204,224,.2);}
+.concept-quote{font-family:'Cormorant',serif;font-size:clamp(2.2rem,4.5vw,4.5rem);font-weight:300;font-style:italic;line-height:1.1;letter-spacing:-.02em;color:var(--ink);max-width:860px;margin-bottom:3rem;position:relative;padding-left:2rem;}
+.concept-quote::before{content:'"';position:absolute;left:0;top:-.2em;font-size:1.2em;color:var(--wing);opacity:.5;}
+.concept-cols{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
+.concept-col-title{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:var(--wing);margin-bottom:.8rem;}
+.concept-col p{font-size:.84rem;line-height:1.95;color:var(--ink2);}
+.concept-col p+p{margin-top:1rem;}
+
+/* TOOL BREAKDOWN */
+.tool-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3rem;}
+.tool-card{background:rgba(255,252,248,.7);padding:1.8rem 1.6rem;position:relative;}
+.tool-card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;}
+.tool-card:nth-child(1)::after{background:var(--wing);}
+.tool-card:nth-child(2)::after{background:var(--lilac);}
+.tool-card:nth-child(3)::after{background:var(--peach);}
+.tool-card:nth-child(4)::after{background:var(--blush);}
+.tool-metaphor{font-family:'Cormorant',serif;font-size:1.4rem;font-weight:700;color:var(--ink);margin-bottom:.3rem;}
+.tool-name{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--wing);margin-bottom:.7rem;}
+.tool-desc{font-size:.74rem;line-height:1.8;color:var(--muted);}
+
+/* CHALLENGE CARDS */
+.challenge-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem;}
+.ch-card{padding:2.4rem;border:1px solid var(--border);background:rgba(255,252,248,.6);position:relative;overflow:hidden;}
+.ch-card::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--wing);}
+.ch-num{font-family:'Cormorant',serif;font-size:3.5rem;font-weight:700;color:rgba(184,204,224,.15);line-height:1;margin-bottom:.6rem;}
+.ch-title{font-family:'Cormorant',serif;font-size:1.3rem;font-weight:700;line-height:1.15;color:var(--ink);margin-bottom:.25rem;}
+.ch-sub{font-family:'Cormorant',serif;font-size:.9rem;font-style:italic;font-weight:300;color:var(--muted);margin-bottom:1.2rem;}
+.ch-problem{font-size:.78rem;line-height:1.85;color:var(--ink2);margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px dashed var(--border);}
+.ch-solution{font-size:.78rem;line-height:1.85;color:#4a6a5a;padding-left:.8rem;border-left:2px solid rgba(90,140,110,.3);}
+.ch-solution::before{content:'Solution  ';font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(90,140,110,.7);}
+
+/* STRATEGY HIGHLIGHT */
+.strategy-bg{background:linear-gradient(135deg,rgba(184,204,224,.1) 0%,var(--cream) 50%,rgba(216,192,216,.08) 100%);border-top:1px solid rgba(184,204,224,.15);}
+.strategy-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:center;}
+.strategy-title{font-family:'Cormorant',serif;font-size:clamp(2rem,4vw,3.8rem);font-weight:700;line-height:.92;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.8rem;}
+.strategy-title em{color:var(--wing);font-style:italic;font-weight:300;}
+.strategy-body{font-size:.84rem;line-height:1.95;color:var(--ink2);margin-bottom:1.4rem;}
+.strategy-pullquote{font-family:'Cormorant',serif;font-size:1.35rem;font-style:italic;font-weight:300;line-height:1.45;color:var(--ink);padding:1.5rem 2rem;border-left:3px solid var(--wing);background:rgba(184,204,224,.1);}
+.strategy-right{}
+.strategy-detail{display:flex;flex-direction:column;gap:1.2rem;}
+.sd-row{display:flex;gap:1.2rem;align-items:flex-start;padding:1.2rem 1.4rem;border:1px solid var(--border);background:rgba(255,252,248,.5);}
+.sd-icon{font-family:'Cormorant',serif;font-size:1.8rem;color:var(--wing);line-height:1;flex-shrink:0;margin-top:-.1rem;}
+.sd-title{font-size:.74rem;font-weight:500;color:var(--ink);margin-bottom:.3rem;}
+.sd-body{font-size:.72rem;line-height:1.78;color:var(--muted);}
+
+/* RESULTS + CONCLUSION */
+.result-quote{font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3.2rem);font-weight:300;font-style:italic;line-height:1.15;color:var(--ink);max-width:800px;margin-bottom:3rem;}
+.result-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
+.result-col-title{font-family:'Cormorant',serif;font-size:1.3rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;}
+.result-list{list-style:none;display:flex;flex-direction:column;gap:.85rem;}
+.result-list li{font-size:.8rem;line-height:1.82;color:var(--ink2);padding-left:1.2rem;position:relative;}
+.result-list li::before{content:'·';position:absolute;left:0;color:var(--wing);font-weight:700;}
+
+/* VIDEO PLAYER */
+.video-wrap{margin-top:3rem;background:var(--night);border:1px solid rgba(184,204,224,.15);overflow:hidden;}
+.video-wrap video{width:100%;height:auto;display:block;}
+.video-caption{padding:1rem 1.4rem;font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,223,240,.4);border-top:1px solid rgba(184,204,224,.1);}
+
+/* CTA */
+.cta-section{background:var(--night);padding:7rem 4rem;text-align:center;}
+.cta-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(200,223,240,.45);margin-bottom:1.5rem;}
+.cta-title{font-family:'Cormorant',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:300;font-style:italic;color:rgba(242,235,224,.95);line-height:1.05;margin-bottom:3rem;}
+.cta-title strong{font-weight:700;font-style:normal;}
+.cta-sub{font-size:.82rem;color:rgba(200,223,240,.5);max-width:480px;margin:0 auto 3rem;line-height:1.85;}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;padding:3rem 4rem;border-top:1px solid var(--border);}
+.bottom-nav-link{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s;}
+.bottom-nav-link:hover{color:var(--ink);}
+.bottom-nav-center{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(160,136,128,.4);}
+
+@media(max-width:900px){
+  nav{padding:1.4rem 1.5rem;}
+  .hero-content{grid-template-columns:1fr;padding:0 1.5rem 3.5rem;}
+  .section{padding:5rem 1.5rem;}
+  .concept-cols,.challenge-grid,.strategy-layout,.result-grid{grid-template-columns:1fr;gap:2rem;}
+  .tool-grid{grid-template-columns:1fr 1fr;}
+  .bottom-nav,.cta-section{padding:2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div class="bg"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">Jiarui <em>Yao</em></a>
+  <a href="projects.html" class="nav-back">← Back to Projects</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-img">
+    <img src="imag/project/11.png" alt="SSU Building — Surface Projection Mapping" id="heroImg"
+         onerror="this.parentElement.style.background='linear-gradient(160deg,#0d1a2e 0%,#162338 40%,#1e3050 70%,#0d1a2e 100%)';this.remove();">
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-label">Y1S2 P2 · After Effects · Projection Mapping · Winter 2025</div>
+      <h1 class="hero-title">Surface —<br><em>The Winter Snow Globe</em></h1>
+      <p class="hero-sub">Architectural projection mapping · Sheridan SSU Building</p>
+      <div class="hero-cri">
+        <div class="hero-cri-row"><span class="hero-cri-label">Context</span><span class="hero-cri-text">A solid building facade treated as the glass wall of a snow globe — transforming permanent architecture into a breathing, dreaming winter world.</span></div>
+        <div class="hero-cri-row"><span class="hero-cri-label">Role</span><span class="hero-cri-text">Sole designer — concept, site photography, After Effects motion compositing, particle system, and mask animation.</span></div>
+        <div class="hero-cri-row"><span class="hero-cri-label">Impact</span><span class="hero-cri-text">When high-tech tools failed, fundamental techniques created more magic. A design lesson that outlasts any single project.</span></div>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-params">
+        <strong>Tool</strong> &nbsp;After Effects<br>
+        <strong>Tech</strong> &nbsp;Solid Layers · Masks · Particle System<br>
+        <strong>Course</strong> Y1S2 · Project 2<br>
+        <strong>Year</strong> &nbsp;Winter 2025<br>
+        <strong>Type</strong> &nbsp;Individual Project
+      </div>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Read Case Study</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</section>
+
+
+<!-- CONCEPT -->
+<div class="concept-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Design Concept</div>
+    <p class="concept-quote">I wanted to turn this solid building into a transparent, breathing, strange snow globe.</p>
+    <div class="concept-cols">
+      <div>
+        <div class="concept-col-title">The Vision</div>
+        <p>I chose projection mapping because I wanted to do something magical. A snow globe is like a tiny world you can hold — full of snow and memories. My goal was to make everyone who saw this projection feel that pure, dreamy winter feeling instantly.</p>
+        <p>I wanted to make the building a poetic landmark. Not a billboard. Not a display surface. A place that temporarily transcended its physical form to hold an entire winter inside.</p>
+      </div>
+      <div>
+        <div class="concept-col-title">The Core Question</div>
+        <p>The power of projection mapping lies not in illuminating space, but in reinventing it. We weren't merely illuminating walls — we were rewriting the building's identity, breathing a new soul into it.</p>
+        <p>Through design, a solid, physical, three-dimensional object can be imbued with a fourth dimension: <strong>emotion and narrative.</strong> This project was the proof of that idea.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- THE PROBLEM -->
+<div class="section" data-reveal>
+  <div class="s-label">The Central Problem</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.5rem;">The fight between<br><em style="font-style:italic;font-weight:300;color:var(--wing);">reality and imagination.</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:3rem;align-items:start;">
+    <div>
+      <p style="font-size:.84rem;line-height:1.95;color:var(--ink2);margin-bottom:1.2rem;">My "model" was just a completely still photo of a building. But I wanted to create a feeling of something flowing and alive inside a snow globe.</p>
+      <p style="font-size:.84rem;line-height:1.95;color:var(--ink2);">This created a huge problem: how could I make this flat picture feel deep? The moving water ripples had to flow across the building's surface. The snow had to fall from inside it — not just float in front like a sticker.</p>
+    </div>
+    <div style="padding:2rem;border:1px solid var(--border);background:rgba(184,204,224,.08);">
+      <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--wing);margin-bottom:.9rem;">The Constraint</div>
+      <p style="font-family:'Cormorant',serif;font-size:1.4rem;font-style:italic;font-weight:300;line-height:1.35;color:var(--ink);">Making these elements grow from the building — not stick on it — was the biggest challenge.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- CHALLENGES -->
+<div class="section" data-reveal style="padding-top:0;">
+  <div class="s-label">Challenges &amp; Solutions</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">Two problems.<br><em style="font-style:italic;font-weight:300;color:var(--wing);">Two precise fixes.</em></h2>
+  <div class="challenge-grid">
+
+    <div class="ch-card">
+      <div class="ch-num">01</div>
+      <div class="ch-title">Corner Anchoring — The Feature That Failed</div>
+      <div class="ch-sub">The tool that promised seamless alignment</div>
+      <div class="ch-problem">After Effects' 'Corner Anchoring' feature sounded like the perfect solution — promising to seamlessly align animations with architectural surfaces. But the result was disastrous: the animation became rigidly locked to four corners, completely losing its dynamism. Instead of helping, this tool turned my crystal ball into a stiff sticker.</div>
+      <div class="ch-solution">Abandoned tracking entirely. Treated the building as the snow globe glass itself. Used Solid Layers with hand-animated Masks to create the sense of light flowing inside crystal — no automated tracking needed.</div>
+    </div>
+
+    <div class="ch-card">
+      <div class="ch-num">02</div>
+      <div class="ch-title">Weeds — The Photo That Broke the Magic</div>
+      <div class="ch-sub">Reality disrupting the dreamed image</div>
+      <div class="ch-problem">The on-site photograph serving as my canvas had weeds in the foreground that severely disrupted the crystal ball's pure, magical aura. The real world kept breaking through the fiction.</div>
+      <div class="ch-solution">Pre-processed the base photograph in image editing software to produce a clean architectural canvas before any compositing began. Reality was edited before the dream could be built on top of it.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- CREATIVE STRATEGY -->
+<div class="strategy-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Creative Strategy</div>
+    <div class="strategy-layout">
+      <div>
+        <h2 class="strategy-title">When high-tech tools<br>fall short —<br><em>create magic with fundamentals.</em></h2>
+        <p class="strategy-body">I stopped trying to make the software do everything for me. Instead of trying to track the building's complex surface, I treated the building itself as the glass of the snow globe.</p>
+        <p class="strategy-body">I used Solid Layers and Masks to mimic light flowing inside crystal. I used the Particle System to create snow falling from the top of the building, drifting outward from its inner depths.</p>
+        <div class="strategy-pullquote">A simple idea, if executed cleverly, has more power than any complicated special effect.</div>
+      </div>
+      <div class="strategy-right">
+        <div class="strategy-detail">
+          <div class="sd-row">
+            <div class="sd-icon">◻</div>
+            <div>
+              <div class="sd-title">Solid Layers — Base Material</div>
+              <p class="sd-body">The fundamental building block. Instead of imported footage, solid colour layers became the raw material of light and crystal illusion.</p>
+            </div>
+          </div>
+          <div class="sd-row">
+            <div class="sd-icon">✏</div>
+            <div>
+              <div class="sd-title">Pen Tool — Carving Knife</div>
+              <p class="sd-body">Masks hand-drawn with the Pen Tool shaped each layer into architectural surfaces — giving depth to a flat photograph through drawn geometry.</p>
+            </div>
+          </div>
+          <div class="sd-row">
+            <div class="sd-icon">❄</div>
+            <div>
+              <div class="sd-title">Particle System — Snow Machine</div>
+              <p class="sd-body">Snow falling from inside the building, not floating in front. Particles emitted from the roofline, drifting downward through the structure.</p>
+            </div>
+          </div>
+          <div class="sd-row">
+            <div class="sd-icon">◈</div>
+            <div>
+              <div class="sd-title">Screen Blend Mode — The Decisive Move</div>
+              <p class="sd-body">The "Screen" blending mode removed all black backgrounds, letting only pure light blend with the building. The key detail: snowflakes landing gently on the "S" of the building's logo and resting there for a moment. That one gesture made the whole scene feel alive.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- AE AS TOOLBOX -->
+<div class="section" data-reveal>
+  <div class="s-label">Reflection — The True Purpose of AE</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;">
+    <div>
+      <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.6rem,3vw,2.8rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.4rem;">I used AE effectively not by<br>knowing every function,<br><em style="font-style:italic;font-weight:300;color:var(--wing);">but by making it serve my story.</em></h2>
+      <p style="font-size:.84rem;line-height:1.95;color:var(--ink2);margin-bottom:1.2rem;">I treated it like a toolbox of basic parts. Each tool had one job, assigned by the story — not by the manual.</p>
+      <p style="font-size:.84rem;line-height:1.95;color:var(--ink2);">The real learning wasn't technical mastery. It was understanding that complex goals are often reached through simple, deliberate choices — not through the most sophisticated tools available.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--border);border:1px solid var(--border);">
+      <div style="background:rgba(255,252,248,.7);padding:1.6rem 1.4rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wing);margin-bottom:.5rem;">Solid Layers</div>
+        <div style="font-family:'Cormorant',serif;font-size:1.2rem;font-weight:700;color:var(--ink);">Base Material</div>
+      </div>
+      <div style="background:rgba(255,252,248,.7);padding:1.6rem 1.4rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wing);margin-bottom:.5rem;">Pen Tool</div>
+        <div style="font-family:'Cormorant',serif;font-size:1.2rem;font-weight:700;color:var(--ink);">Carving Knife</div>
+      </div>
+      <div style="background:rgba(255,252,248,.7);padding:1.6rem 1.4rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wing);margin-bottom:.5rem;">Particle System</div>
+        <div style="font-family:'Cormorant',serif;font-size:1.2rem;font-weight:700;color:var(--ink);">Snow Machine</div>
+      </div>
+      <div style="background:rgba(255,252,248,.7);padding:1.6rem 1.4rem;">
+        <div style="font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:var(--wing);margin-bottom:.5rem;">Keyframes</div>
+        <div style="font-family:'Cormorant',serif;font-size:1.2rem;font-weight:700;color:var(--ink);">Spell for Time</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- RESULTS -->
+<div class="section" data-reveal style="padding-top:0;">
+  <div class="s-label">Results</div>
+  <p class="result-quote">The final result validates the path of handcrafted design.</p>
+  <div class="result-grid">
+    <div>
+      <div class="result-col-title" style="font-family:'Cormorant',serif;">What was achieved</div>
+      <ul class="result-list">
+        <li>Water ripples flow naturally across the building's surface — not locked to corners, but organic and alive.</li>
+        <li>Snowflakes drift outward from the building's inner depths, as though the structure contains an entire winter inside.</li>
+        <li>The animation that was once frozen and stiff now blends seamlessly with the architecture.</li>
+        <li>Snowflakes landing on the "S" logo — a micro-detail that makes the whole scene feel inhabited rather than projected.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="result-col-title" style="font-family:'Cormorant',serif;">What was learned</div>
+      <ul class="result-list">
+        <li>The failure of Corner Anchoring was not a setback — it was the lesson that redirected the entire creative approach.</li>
+        <li>Treating the building as the globe's glass (not its surface) was the conceptual breakthrough that made everything possible.</li>
+        <li>Sometimes the simplest path best reaches complex goals. Automation is not always the answer.</li>
+        <li>A tiny true detail — snow landing on a letter — carries more emotional weight than elaborate technical effects.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="video-wrap">
+    <video controls playsinline preload="metadata"
+           poster="">
+      <source src="imag/project/11.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="video-caption">Surface — The Winter Snow Globe · Sheridan SSU Building · After Effects Projection Mapping · Winter 2025</div>
+  </div>
+</div>
+
+
+<!-- CTA -->
+<div class="cta-section">
+  <div class="cta-label">Conclusion</div>
+  <h2 class="cta-title"><strong>The building became a dream.</strong><br>The snow fell from inside.</h2>
+  <p class="cta-sub">The power of projection mapping lies not in illuminating space, but in reinventing it. Through design, a solid object gains a fourth dimension — emotion and narrative.</p>
+</div>
+
+<div class="bottom-nav">
+  <a href="projects.html" class="bottom-nav-link">← All Projects</a>
+  <span class="bottom-nav-center">Y1S2 P2 · Jiarui Yao · Winter 2025</span>
+  <a href="case-study-sound-of-melting.html" class="bottom-nav-link">Next: Sound of Melting →</a>
+</div>
+
+<script>
+(function(){
+  function b(){const y=window.scrollY,m=document.body.scrollHeight-window.innerHeight;document.documentElement.style.setProperty('--scroll',y);document.documentElement.style.setProperty('--scroll-p',m>0?y/m:0);}
+  window.addEventListener('scroll',b,{passive:true});b();
+})();
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.style.transform='translate(-50%,-50%) scale(2.2)');el.addEventListener('mouseleave',()=>cur.style.transform='translate(-50%,-50%) scale(1)');});
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
+const heroImg=document.getElementById('heroImg');
+if(heroImg){heroImg.complete?setTimeout(()=>heroImg.classList.add('loaded'),100):heroImg.addEventListener('load',()=>heroImg.classList.add('loaded'));}
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
+(function(){
+  const v=document.createElement('div');
+  Object.assign(v.style,{position:'fixed',inset:'0',zIndex:'99999',background:'#f2ebe0',transformOrigin:'top center',transform:'translateY(0)',transition:'transform 0.72s cubic-bezier(0.76,0,0.24,1)',pointerEvents:'none'});
+  const s=document.createElement('div');Object.assign(s.style,{position:'absolute',inset:'0',background:'linear-gradient(135deg,rgba(184,204,224,.2) 0%,transparent 45%,rgba(216,192,216,.12) 100%)'});
+  v.appendChild(s);document.body.prepend(v);v.getBoundingClientRect();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{v.style.transform='translateY(-100%)'}));
+  let n=false;
+  document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||n)return;const h=a.getAttribute('href');if(!h||h==='#'||h.startsWith('#')||h.startsWith('http')||a.target==='_blank')return;e.preventDefault();n=true;v.style.transition='transform 0.58s cubic-bezier(0.76,0,0.24,1)';v.style.transform='translateY(0)';setTimeout(()=>{window.location.href=h;},580);});
+})();
+</script>
+</body>
+</html>

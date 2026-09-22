@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apple Watch Heart Rate Alarm — UI Analysis · Jiarui Yao</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400&family=Afacad:wght@400;500;600&family=Inter:wght@300;400;500&family=Akshar:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f2ebe0;--blush:#e8a8b0;--peach:#f2c89a;--wing:#b8cce0;
+  --lilac:#d8c0d8;--ink:#2a1f1a;--ink2:#5a4840;--muted:#a08880;
+  --border:rgba(200,176,168,.18);--glass:rgba(242,235,224,.72);
+  /* Apple Watch red palette */
+  --aw-red:#DF103D;--aw-pink:#FF8E7B;--aw-rose:#EC7274;
+  --aw-blush:#E4B4B4;--aw-pale:#FFD6D6;--aw-dark:#82090B;
+  --scroll:0;--scroll-p:0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--cream);color:var(--ink);overflow-x:hidden;cursor:none;}
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");background-size:256px 256px;}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 65% 55% at 20% 0%,rgba(223,16,61,.12) 0%,transparent 55%),radial-gradient(ellipse 55% 50% at 85% 35%,rgba(255,142,123,.1) 0%,transparent 55%),radial-gradient(ellipse 50% 45% at 50% 100%,rgba(242,235,224,.35) 0%,transparent 55%);background-color:var(--cream);}
+#cur{width:7px;height:7px;background:var(--aw-red);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:transform .15s;}
+
+/* ── NAV ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.8rem 4rem;transition:background .4s;}
+nav.scrolled{background:rgba(242,235,224,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Cormorant',serif;font-size:1.1rem;font-weight:700;letter-spacing:.08em;color:var(--ink);text-decoration:none;}
+.nav-logo em{font-style:italic;font-weight:300;color:var(--blush);}
+.nav-back{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s,gap .2s;}
+.nav-back svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.5;transition:transform .2s;}
+.nav-back:hover{color:var(--ink);gap:.3rem;}
+.nav-back:hover svg{transform:translateX(-3px);}
+
+/* ── HERO ── */
+.hero{position:relative;width:100%;height:100vh;display:flex;align-items:flex-end;overflow:hidden;}
+.hero-bg{position:absolute;inset:0;background:linear-gradient(180deg,#DF103D 11%,#FF8E7B 84.5%);}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,.18) 0%,transparent 50%),linear-gradient(to bottom,rgba(0,0,0,.08) 0%,rgba(0,0,0,.35) 100%);}
+.hero-img{position:absolute;inset:0;}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;opacity:.88;}
+.hero-content{position:relative;z-index:10;padding:0 4rem 4.5rem;width:100%;display:grid;grid-template-columns:1fr auto;align-items:end;gap:3rem;}
+.hero-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(255,220,215,.75);display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;}
+.hero-label::before{content:'';width:18px;height:1px;background:rgba(255,220,215,.6);}
+.hero-title{font-family:'Cormorant',serif;font-size:clamp(3.2rem,7vw,7.5rem);font-weight:700;line-height:.88;letter-spacing:-.025em;color:#fff;margin-bottom:.5rem;}
+.hero-title em{display:block;font-style:italic;font-weight:300;color:rgba(255,220,215,.88);}
+.hero-sub{font-family:'Cormorant',serif;font-size:clamp(.95rem,1.5vw,1.15rem);font-style:italic;font-weight:300;color:rgba(255,220,215,.6);margin-top:.8rem;}
+.hero-meta{text-align:right;padding-bottom:.2rem;}
+.hero-params{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,200,195,.5);line-height:2;}
+.hero-params strong{color:rgba(255,220,215,.75);font-weight:400;}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;pointer-events:none;z-index:10;opacity:0;animation:fadeIn .8s 1.8s forwards;}
+.hero-scroll span{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(255,220,215,.4);}
+.hero-scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(255,200,195,.5),transparent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scaleY(1);opacity:.5;}50%{transform:scaleY(.4);opacity:.1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* ── SECTIONS ── */
+.section{max-width:1200px;margin:0 auto;padding:8rem 4rem;opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);}
+.section.visible{opacity:1;transform:translateY(0);}
+.s-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--aw-red);display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;}
+.s-label::before{content:'';width:18px;height:1px;background:var(--aw-red);}
+.s-title{font-family:'Cormorant',serif;font-size:clamp(2rem,4.5vw,4rem);font-weight:700;line-height:.9;letter-spacing:-.025em;color:var(--ink);margin-bottom:1.8rem;}
+.s-title em{font-style:italic;font-weight:300;color:var(--aw-red);}
+.s-body{font-size:.88rem;line-height:2;color:var(--ink2);max-width:680px;}
+.s-body p+p{margin-top:1.2rem;}
+
+/* ── OVERVIEW STATS ── */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.stat-row{display:flex;flex-direction:column;gap:2rem;margin-top:2rem;}
+.stat-item{}
+.stat-label{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(223,16,61,.6);margin-bottom:.35rem;}
+.stat-value{font-family:'Cormorant',serif;font-size:1.4rem;font-weight:600;color:var(--ink);line-height:1.2;}
+
+/* ── FIGMA SLIDE RECONSTRUCTION ── */
+.slide-section{background:linear-gradient(180deg,rgba(223,16,61,.06) 0%,transparent 100%);border-top:1px solid rgba(223,16,61,.12);border-bottom:1px solid rgba(223,16,61,.12);padding:6rem 0;}
+.slide-section-inner{max-width:1320px;margin:0 auto;padding:0 4rem;}
+.slide-title-row{display:flex;align-items:baseline;gap:2rem;margin-bottom:3rem;}
+.slide-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--aw-red);display:flex;align-items:center;gap:.8rem;}
+.slide-label::before{content:'';width:18px;height:1px;background:var(--aw-red);}
+.slide-caption{font-family:'Cormorant',serif;font-size:1rem;font-style:italic;color:var(--muted);}
+
+/* 16:9 Figma slide container — scales responsively */
+.figma-slide-wrap{position:relative;width:100%;aspect-ratio:16/9;overflow:hidden;border-radius:4px;box-shadow:0 40px 80px rgba(223,16,61,.22),0 8px 24px rgba(0,0,0,.18);}
+.figma-slide{position:absolute;inset:0;background:linear-gradient(180deg,#DF103D 11%,#FF8E7B 84.5%);overflow:hidden;}
+
+/* Watch image — center-right, spans most of height */
+.fs-watch{position:absolute;right:4%;top:10%;width:38%;height:85%;display:flex;align-items:center;justify-content:center;}
+.fs-watch img{width:100%;height:100%;object-fit:contain;object-position:center;}
+
+/* White gradient veil over watch — matches image 8 in Figma */
+.fs-veil{position:absolute;right:4%;top:10%;width:38%;height:85%;background:linear-gradient(181.08deg,#fff 0.9%,rgba(255,255,255,0) 99.1%);pointer-events:none;}
+
+/* Annotation bubbles */
+.fs-ann{position:absolute;display:flex;flex-direction:column;gap:2%;}
+.fs-bubble{display:flex;align-items:flex-start;gap:3%;}
+.fs-dot{flex-shrink:0;border-radius:50%;}
+
+/* Title annotation — left side */
+.fs-title-ann{position:absolute;left:3%;top:29%;}
+.fs-title-ann .fs-dot{width:3.2%;aspect-ratio:1;background:#EC7274;border-radius:50%;flex-shrink:0;}
+.fs-title-text{font-family:'Afacad',sans-serif;font-size:clamp(.6rem,2.5vw,2.2rem);font-weight:400;color:#fff;text-shadow:0 4px 4px rgba(0,0,0,.25);line-height:1.33;margin-left:1%;}
+
+/* Function annotation — top left */
+.fs-func{position:absolute;left:3%;top:8%;width:28%;}
+.fs-func-dot{width:5.2%;aspect-ratio:1;background:rgba(231,63,99,.89);border-radius:50%;flex-shrink:0;margin-bottom:4%;}
+.fs-func-text{font-family:'Afacad',sans-serif;font-size:clamp(.4rem,1.3vw,1rem);font-weight:400;color:#D9D9D9;line-height:1.33;margin-left:0;}
+
+/* Process annotation */
+.fs-proc{position:absolute;left:6%;top:48%;}
+.fs-proc .fs-dot{width:5.5%;aspect-ratio:1;background:#E4B4B4;border-radius:50%;flex-shrink:0;}
+.fs-proc-text{font-family:'Inter',sans-serif;font-size:clamp(.45rem,1.5vw,1.1rem);color:#8C1C64;font-weight:400;margin-left:2%;}
+
+/* Photoelectric annotation */
+.fs-photo{position:absolute;left:8%;top:62%;}
+.fs-photo .fs-dot{width:6.6%;aspect-ratio:1;background:#FFD6D6;border-radius:50%;flex-shrink:0;}
+.fs-photo-text{font-family:'Inter',sans-serif;font-size:clamp(.4rem,1.2vw,.9rem);color:#8C1C64;font-weight:400;margin-left:2%;}
+
+/* Structures annotation — right side */
+.fs-struct{position:absolute;right:4%;top:8%;width:24%;text-align:right;}
+.fs-struct .fs-dot{width:5.2%;aspect-ratio:1;background:#E4B4B4;border-radius:50%;flex-shrink:0;margin-left:auto;margin-bottom:3%;}
+.fs-struct-text{font-family:'Akshar',sans-serif;font-size:clamp(.35rem,1.1vw,.85rem);color:#82090B;font-weight:400;line-height:1.38;}
+
+/* Apple logo top right */
+.fs-apple{position:absolute;top:3%;right:3%;opacity:.7;}
+.fs-apple svg{width:clamp(1.2rem,3.5vw,3rem);height:auto;}
+
+/* ── TWO-COL ANALYSIS ── */
+.analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:4rem;margin-top:3rem;}
+.analysis-card{border:1px solid var(--border);padding:2.4rem;background:rgba(255,252,248,.5);position:relative;overflow:hidden;}
+.analysis-card::before{content:'';position:absolute;top:0;left:0;width:3px;height:0;background:var(--aw-red);transition:height .6s cubic-bezier(.22,1,.36,1);}
+.analysis-card.visible::before{height:100%;}
+.ac-num{font-family:'Cormorant',serif;font-size:3rem;font-weight:700;color:rgba(223,16,61,.1);line-height:1;margin-bottom:.5rem;}
+.ac-title{font-family:'Cormorant',serif;font-size:1.4rem;font-weight:600;color:var(--ink);margin-bottom:.8rem;}
+.ac-body{font-size:.78rem;line-height:1.9;color:var(--ink2);}
+.ac-tag{display:inline-block;font-family:'Space Mono',monospace;font-size:.44rem;letter-spacing:.14em;text-transform:uppercase;color:var(--aw-red);border:1px solid rgba(223,16,61,.3);padding:.18rem .55rem;margin-top:1rem;}
+
+/* ── METHODOLOGY SECTION ── */
+.method-bg{background:rgba(223,16,61,.04);border-top:1px solid rgba(223,16,61,.1);border-bottom:1px solid rgba(223,16,61,.1);padding:6rem 0;}
+.method-inner{max-width:1200px;margin:0 auto;padding:0 4rem;}
+.method-grid{display:grid;grid-template-columns:1fr 2fr;gap:6rem;align-items:start;}
+.method-steps{display:flex;flex-direction:column;gap:2rem;margin-top:1rem;}
+.method-step{display:grid;grid-template-columns:2.5rem 1fr;gap:1.2rem;align-items:start;}
+.ms-num{font-family:'Cormorant',serif;font-size:1.8rem;font-weight:700;color:rgba(223,16,61,.2);line-height:1;}
+.ms-content{}
+.ms-title{font-family:'Cormorant',serif;font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:.3rem;}
+.ms-body{font-size:.75rem;line-height:1.85;color:var(--muted);}
+
+/* ── KEY FINDINGS ── */
+.findings-row{display:flex;gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3rem;}
+.finding{flex:1;background:var(--cream);padding:2.4rem 2rem;}
+.f-icon{font-size:1.4rem;margin-bottom:.8rem;}
+.f-label{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:var(--aw-red);margin-bottom:.5rem;}
+.f-text{font-family:'Cormorant',serif;font-size:1.1rem;font-weight:600;line-height:1.35;color:var(--ink);}
+
+/* ── FIGMA LINK CTA ── */
+.figma-cta{border-top:1px solid var(--border);margin-top:5rem;padding-top:3rem;display:flex;align-items:center;justify-content:space-between;}
+.fc-copy{font-size:.78rem;line-height:1.8;color:var(--muted);max-width:440px;}
+.btn-red{font-family:'DM Sans',sans-serif;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;background:var(--aw-red);border:1px solid var(--aw-red);padding:.78rem 1.8rem;transition:background .2s,transform .2s;}
+.btn-red:hover{background:#b80c30;transform:translateY(-1px);}
+.btn-red svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2;}
+.btn-ghost-red{font-family:'DM Sans',sans-serif;font-size:.66rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:var(--aw-red);text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;border:1px solid rgba(223,16,61,.4);padding:.78rem 1.8rem;transition:all .2s;margin-left:1rem;}
+.btn-ghost-red:hover{background:rgba(223,16,61,.06);}
+
+/* ── RESPONSIVE ── */
+@media(max-width:768px){
+  nav{padding:1.4rem 1.5rem;}
+  .hero-content{grid-template-columns:1fr;padding:0 1.5rem 3rem;}
+  .hero-meta{display:none;}
+  .section,.slide-section-inner,.method-inner{padding-left:1.5rem;padding-right:1.5rem;}
+  .overview-grid,.analysis-grid,.method-grid{grid-template-columns:1fr;}
+  .findings-row{flex-direction:column;}
+  .figma-cta{flex-direction:column;gap:1.5rem;align-items:flex-start;}
+  .fs-func-text,.fs-proc-text,.fs-photo-text,.fs-struct-text{display:none;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div class="bg"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">Jiarui <em>Yao</em></a>
+  <a href="projects.html" class="nav-back">
+    <svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    All Projects
+  </a>
+</nav>
+
+<!-- ══ HERO ══ -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-overlay"></div>
+  <div class="hero-img">
+    <img src="imag/project/02.png" alt="Apple Watch Heart Rate Alarm UI">
+  </div>
+  <div class="hero-content">
+    <div>
+      <div class="hero-label">Project 02 · UI Analysis · Fall 2024</div>
+      <h1 class="hero-title">Apple Watch —<br><em>Heart Rate Alarm</em></h1>
+      <p class="hero-sub">At what point does a number become something you cannot ignore?</p>
+    </div>
+    <div class="hero-meta">
+      <p class="hero-params">
+        <strong>Course</strong> IxD Behaviours<br>
+        <strong>Tools</strong> Figma · UI Analysis<br>
+        <strong>Year</strong> Fall 2024<br>
+        <strong>Type</strong> UI Design Analysis
+      </p>
+    </div>
+  </div>
+  <div class="hero-scroll">
+    <span>Scroll</span>
+    <div class="hero-scroll-line"></div>
+  </div>
+</div>
+
+<!-- ══ OVERVIEW ══ -->
+<section class="section" id="overview">
+  <div class="overview-grid">
+    <div>
+      <div class="s-label">Overview</div>
+      <h2 class="s-title">Colour theory<br>at the limit of <em>reaction time.</em></h2>
+    </div>
+    <div>
+      <div class="s-body">
+        <p>The Apple Watch Heart Rate Alarm UI raises a fundamental question in health interaction design: how does a visual system communicate urgency without creating panic?</p>
+        <p>This project analyses the information hierarchy, colour psychology, and cognitive load management embedded in Apple's heart rate notification system — examining how every design decision operates under the constraint of critical seconds.</p>
+      </div>
+      <div class="stat-row">
+        <div class="stat-item"><div class="stat-label">Design Question</div><div class="stat-value">When does a number demand action?</div></div>
+        <div class="stat-item"><div class="stat-label">Key Mechanism</div><div class="stat-value">Photoelectric volumetric tracing</div></div>
+        <div class="stat-item"><div class="stat-label">Platform</div><div class="stat-value">watchOS · Apple Watch Series 8</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FIGMA SLIDE RECONSTRUCTION ══ -->
+<div class="slide-section">
+  <div class="slide-section-inner">
+    <div class="slide-title-row">
+      <div class="slide-label">Figma Design Slide</div>
+      <span class="slide-caption">Reconstructed 1920 × 1080 — interaction analysis layout</span>
+    </div>
+
+    <div class="figma-slide-wrap section" id="slide">
+      <div class="figma-slide">
+
+        <!-- Apple logo top right -->
+        <div class="fs-apple">
+          <svg viewBox="0 0 24 24" fill="rgba(255,255,255,.7)"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        </div>
+
+        <!-- FUNCTION — top left explanation -->
+        <div class="fs-func">
+          <div style="display:flex;align-items:flex-start;gap:6%;">
+            <div class="fs-dot fs-func-dot" style="width:6%;padding-top:6%;background:rgba(231,63,99,.89);border-radius:50%;flex-shrink:0;margin-top:2%;"></div>
+            <div>
+              <div style="font-family:'Space Mono',monospace;font-size:clamp(.32rem,.9vw,.72rem);letter-spacing:.12em;text-transform:uppercase;color:rgba(217,217,217,.75);margin-bottom:4%;">Function</div>
+              <p class="fs-func-text">If your heart rate remains above or below a chosen beats per minute (BPM), your Apple Watch can notify you.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- TITLE — left centre -->
+        <div class="fs-title-ann" style="left:3%;top:30%;display:flex;align-items:flex-start;gap:2%;">
+          <div style="width:3.2%;padding-top:3.2%;background:#EC7274;border-radius:50%;flex-shrink:0;margin-top:1%;"></div>
+          <div class="fs-title-text">Apple Watch<br>Heart Rate<br>Alarm</div>
+        </div>
+
+        <!-- PROCESS — left mid -->
+        <div class="fs-proc" style="left:4%;top:50%;display:flex;align-items:center;gap:3%;">
+          <div style="width:5.5%;padding-top:5.5%;background:#E4B4B4;border-radius:50%;flex-shrink:0;"></div>
+          <span class="fs-proc-text">Process</span>
+        </div>
+
+        <!-- PHOTOELECTRIC — left lower -->
+        <div class="fs-photo" style="left:5%;top:63%;display:flex;align-items:center;gap:3%;">
+          <div style="width:6.5%;padding-top:6.5%;background:#FFD6D6;border-radius:50%;flex-shrink:0;"></div>
+          <span class="fs-photo-text">photoelectric<br>volumetric tracing</span>
+        </div>
+
+        <!-- WATCH IMAGE — centre right -->
+        <div class="fs-watch">
+          <img src="imag/project/02.png" alt="Apple Watch Heart Rate UI">
+        </div>
+
+        <!-- White gradient veil over watch top -->
+        <div class="fs-veil"></div>
+
+        <!-- STRUCTURES — right side -->
+        <div class="fs-struct" style="right:2%;top:8%;display:flex;flex-direction:column;align-items:flex-end;">
+          <div style="width:5%;padding-top:5%;background:#E4B4B4;border-radius:50%;margin-bottom:5%;"></div>
+          <span class="fs-struct-text">Structures and other<br>forms of work</span>
+        </div>
+
+      </div>
+    </div>
+
+    <p style="font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.16em;text-transform:uppercase;color:rgba(160,136,128,.45);margin-top:1.2rem;text-align:right;">Figma design · 1920 × 1080 · IxD Behaviours · Fall 2024</p>
+  </div>
+</div>
+
+<!-- ══ ANALYSIS ══ -->
+<section class="section" id="analysis">
+  <div class="s-label">Design Analysis</div>
+  <h2 class="s-title">Three layers of <em>urgency design.</em></h2>
+  <div class="analysis-grid">
+    <div class="analysis-card section" id="ac1">
+      <div class="ac-num">01</div>
+      <div class="ac-title">Colour as Cognitive Trigger</div>
+      <p class="ac-body">Apple's use of saturated red (#FF3B30) for abnormal readings exploits pre-attentive processing — the visual system flags the anomaly before conscious attention arrives. The gradient from warning amber to alarm red encodes escalating urgency without requiring the user to read a single word.</p>
+      <span class="ac-tag">Colour Psychology</span>
+    </div>
+    <div class="analysis-card section" id="ac2">
+      <div class="ac-num">02</div>
+      <div class="ac-title">Information Hierarchy Under Stress</div>
+      <p class="ac-body">The BPM number dominates at 72px. Secondary context (timestamp, previous reading) is reduced to 17px — a 4:1 ratio that ensures the critical datum lands in peripheral vision even during a health crisis. This hierarchy is not aesthetic; it is physiological.</p>
+      <span class="ac-tag">Visual Hierarchy</span>
+    </div>
+    <div class="analysis-card section" id="ac3">
+      <div class="ac-num">03</div>
+      <div class="ac-title">Photoelectric Volumetric Tracing</div>
+      <p class="ac-body">The underlying sensing mechanism — PPG (photoplethysmography) — uses green LED light reflected off blood vessels to detect pulse rate. The design communicates this through pulsing animation rather than technical explanation, translating complex biomedical feedback into a legible emotional rhythm.</p>
+      <span class="ac-tag">Health IxD</span>
+    </div>
+    <div class="analysis-card section" id="ac4">
+      <div class="ac-num">04</div>
+      <div class="ac-title">Structure & Other Interaction Forms</div>
+      <p class="ac-body">Beyond the notification itself, the system embeds decision architecture: the alarm offers two actions (OK / Add to Health), each with deliberate friction weighting. "OK" dismisses; adding to Health requires a second tap — a pattern that protects data integrity during moments of impaired cognition.</p>
+      <span class="ac-tag">Interaction Architecture</span>
+    </div>
+  </div>
+</section>
+
+<!-- ══ METHODOLOGY ══ -->
+<div class="method-bg">
+  <div class="method-inner">
+    <div class="method-grid">
+      <div class="section" id="method-title">
+        <div class="s-label">Process</div>
+        <h2 class="s-title" style="font-size:clamp(1.8rem,3.5vw,3.2rem);">How the<br>analysis<br><em>was built.</em></h2>
+      </div>
+      <div class="method-steps section" id="method-steps">
+        <div class="method-step">
+          <div class="ms-num">01</div>
+          <div class="ms-content">
+            <div class="ms-title">Interaction Mapping</div>
+            <p class="ms-body">Documented every state transition in the heart rate alarm flow — from background monitoring through escalating notification levels to the user response decision.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="ms-num">02</div>
+          <div class="ms-content">
+            <div class="ms-title">Visual Deconstruction in Figma</div>
+            <p class="ms-body">Rebuilt the Apple Watch UI from observation in Figma, annotating each design decision: typographic scale, colour assignment, animation timing, and touch target sizing.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="ms-num">03</div>
+          <div class="ms-content">
+            <div class="ms-title">Cognitive Load Analysis</div>
+            <p class="ms-body">Applied Miller's Law and Fitts's Law to quantify the interface's efficiency under stress conditions — measuring information density against the constraints of diminished attentional capacity.</p>
+          </div>
+        </div>
+        <div class="method-step">
+          <div class="ms-num">04</div>
+          <div class="ms-content">
+            <div class="ms-title">Biomedical Context Research</div>
+            <p class="ms-body">Researched PPG sensing methodology to connect the hardware mechanism (photoelectric volumetric tracing) to the interface decisions, understanding why the pulsing visual metaphor was chosen over a static readout.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ KEY FINDINGS ══ -->
+<section class="section" id="findings">
+  <div class="s-label">Key Findings</div>
+  <h2 class="s-title">What the design <em>teaches.</em></h2>
+  <div class="findings-row">
+    <div class="finding">
+      <div class="f-icon">◉</div>
+      <div class="f-label">Urgency Threshold</div>
+      <p class="f-text">"A number only demands action when the interface removes all other options."</p>
+    </div>
+    <div class="finding">
+      <div class="f-icon">◈</div>
+      <div class="f-label">Colour Economy</div>
+      <p class="f-text">"Red works because it is used once — only when the threshold is crossed."</p>
+    </div>
+    <div class="finding">
+      <div class="f-icon">◎</div>
+      <div class="f-label">Motion as Data</div>
+      <p class="f-text">"The heartbeat animation isn't decoration — it's the metric itself, made legible."</p>
+    </div>
+  </div>
+
+  <div class="figma-cta">
+    <p class="fc-copy">Full annotated Figma file available — includes all interaction states, component breakdown, and colour annotation system.</p>
+    <div>
+      <a href="https://www.figma.com/design/4tiSLcmYzIpwd6J7guS2Cl/Untitled?node-id=0-1&t=RswTCkgtP9SRlQXD-1" target="_blank" class="btn-red">
+        Open in Figma
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+      <a href="projects.html" class="btn-ghost-red">← All Projects</a>
+    </div>
+  </div>
+</section>
+
+<div style="height:4rem;"></div>
+
+<script>
+  const cur=document.getElementById('cur');
+  document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+  document.querySelectorAll('a,button').forEach(el=>{
+    el.addEventListener('mouseenter',()=>cur.style.transform='translate(-50%,-50%) scale(2.2)');
+    el.addEventListener('mouseleave',()=>cur.style.transform='translate(-50%,-50%) scale(1)');
+  });
+  window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
+
+  /* Scroll reveal */
+  const obs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+  },{threshold:0.08});
+  document.querySelectorAll('.section').forEach(el=>obs.observe(el));
+
+  /* Analysis cards left-border animation trigger */
+  const cardObs=new IntersectionObserver(entries=>{
+    entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');}});
+  },{threshold:0.1});
+  document.querySelectorAll('.analysis-card').forEach(el=>cardObs.observe(el));
+
+  /* Liquid veil transition */
+  (function(){
+    const veil=document.createElement('div');
+    Object.assign(veil.style,{position:'fixed',inset:'0',zIndex:'99999',background:'#f2ebe0',transformOrigin:'top center',transform:'translateY(0)',transition:'transform 0.72s cubic-bezier(0.76,0,0.24,1)',pointerEvents:'none'});
+    const sh=document.createElement('div');
+    Object.assign(sh.style,{position:'absolute',inset:'0',background:'linear-gradient(135deg,rgba(223,16,61,.15) 0%,transparent 45%,rgba(255,142,123,.1) 100%)'});
+    veil.appendChild(sh);
+    document.body.prepend(veil);
+    veil.getBoundingClientRect();
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{veil.style.transform='translateY(-100%)';}));
+    let nav=false;
+    document.addEventListener('click',e=>{
+      const a=e.target.closest('a[href]');
+      if(!a||nav)return;
+      const h=a.getAttribute('href');
+      if(!h||h==='#'||h.startsWith('#')||h.startsWith('http')||a.target==='_blank')return;
+      e.preventDefault();nav=true;
+      veil.style.transition='transform 0.58s cubic-bezier(0.76,0,0.24,1)';
+      veil.style.transform='translateY(0)';
+      setTimeout(()=>{window.location.href=h;},580);
+    });
+  })();
+
+  /* Scroll broadcast */
+  (function(){
+    function b(){const y=window.scrollY,m=document.body.scrollHeight-window.innerHeight;document.documentElement.style.setProperty('--scroll',y);document.documentElement.style.setProperty('--scroll-p',m>0?y/m:0);}
+    window.addEventListener('scroll',b,{passive:true});b();
+  })();
+</script>
+</body>
+</html>

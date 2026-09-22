@@ -1,0 +1,1621 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Projects — Jiarui Yao</title>
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+	<style>
+		/* ════════════════════════════════════════
+   TOKENS
+   ════════════════════════════════════════ */
+		:root {
+			--cream: #f2ebe0;
+			--stage: #f4f2ee;
+			--blush: #e8a8b0;
+			--peach: #f2c89a;
+			--wing: #b8cce0;
+			--lilac: #d8c0d8;
+			--ink: #2a1f1a;
+			--ink2: #5a4840;
+			--muted: #a08880;
+			--card: #fdf9f4;
+			--border: rgba(200, 176, 168, .15);
+			--nav-h: 52px;
+		}
+
+		*,
+		*::before,
+		*::after {
+			box-sizing: border-box;
+			margin: 0;
+			padding: 0;
+		}
+
+		html {
+			height: 100%;
+		}
+
+		body {
+			font-family: 'DM Sans', sans-serif;
+			font-weight: 300;
+			background: var(--card);
+			color: var(--ink);
+			overflow: hidden;
+			height: 100vh;
+			cursor: none;
+		}
+
+		/* grain */
+		body::after {
+			content: '';
+			position: fixed;
+			inset: 0;
+			z-index: 9997;
+			pointer-events: none;
+			opacity: .03;
+			background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+			background-size: 220px 220px;
+		}
+
+		/* ── CURSOR ── */
+		#cur {
+			width: 6px;
+			height: 6px;
+			background: var(--blush);
+			border-radius: 50%;
+			position: fixed;
+			top: 0;
+			left: 0;
+			pointer-events: none;
+			z-index: 9999;
+			transform: translate(-50%, -50%);
+			mix-blend-mode: multiply;
+			transition: transform .12s;
+		}
+
+		/* ── PEARL SPHERE ── */
+		.sphere {
+			position: fixed;
+			width: 64px;
+			height: 64px;
+			border-radius: 50%;
+			pointer-events: none;
+			z-index: 2;
+			transform: translate(-50%, -50%) scale(1.2);
+			opacity: 0;
+			background: radial-gradient(circle at 35% 35%, rgba(255, 255, 255, .95) 0%, rgba(242, 235, 224, .60) 22%, rgba(242, 200, 154, .55) 55%, rgba(42, 31, 26, 1) 100%);
+			box-shadow: inset -4px -4px 12px rgba(0, 0, 0, .22), inset 3px 3px 8px rgba(255, 255, 255, .55), 0 12px 30px rgba(42, 31, 26, .14), 0 4px 10px rgba(232, 168, 176, .16);
+			filter: blur(4px);
+			transition: opacity .4s, transform .5s cubic-bezier(.23, 1, .32, 1), filter .5s cubic-bezier(.23, 1, .32, 1);
+		}
+
+		.sphere::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			border-radius: 50%;
+			background: conic-gradient(from 180deg, transparent 0deg, rgba(184, 204, 224, .35) 50deg, rgba(216, 192, 216, .30) 110deg, rgba(242, 200, 154, .22) 170deg, rgba(232, 168, 176, .28) 230deg, transparent 280deg, rgba(184, 204, 224, .18) 330deg, transparent 360deg);
+			mix-blend-mode: screen;
+		}
+
+		.sphere::after {
+			content: '';
+			position: absolute;
+			top: 18%;
+			left: 22%;
+			width: 26%;
+			height: 16%;
+			background: radial-gradient(ellipse, rgba(255, 255, 255, .98) 0%, transparent 100%);
+			border-radius: 50%;
+			transform: rotate(-28deg);
+		}
+
+		/* ════════════════════════════════════════
+   TOP NAV
+   ════════════════════════════════════════ */
+		.top-nav {
+			position: fixed;
+			top: 0;
+			left: 0;
+			right: 0;
+			z-index: 100;
+			height: var(--nav-h);
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			padding: 0 2rem;
+			background: rgba(253, 249, 244, .95);
+			backdrop-filter: blur(24px) saturate(150%);
+			border-bottom: 1px solid var(--border);
+		}
+
+		.nav-logo {
+			font-family: 'Cormorant', serif;
+			font-size: 1.05rem;
+			font-weight: 700;
+			letter-spacing: .06em;
+			color: var(--ink);
+			text-decoration: none;
+		}
+
+		.nav-logo em {
+			font-style: italic;
+			font-weight: 300;
+			color: var(--blush);
+		}
+
+		.nav-home {
+			font-family: 'Space Mono', monospace;
+			font-size: .46rem;
+			letter-spacing: .18em;
+			text-transform: uppercase;
+			color: var(--muted);
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			gap: .4rem;
+			transition: color .2s, gap .2s;
+		}
+
+		.nav-home svg {
+			width: 11px;
+			height: 11px;
+			stroke: currentColor;
+			fill: none;
+			stroke-width: 1.5;
+		}
+
+		.nav-home:hover {
+			color: var(--ink);
+			gap: .2rem;
+		}
+
+		/* ════════════════════════════════════════
+   SHELL — 320px + 1fr
+   Fixed outer, only right panel scrolls
+   ════════════════════════════════════════ */
+		.projects-wrap {
+			display: grid;
+			grid-template-columns: 320px 1fr;
+			height: calc(100vh - var(--nav-h));
+			margin-top: var(--nav-h);
+			overflow: hidden;
+		}
+
+		/* ════════════════════════════════════════
+   LEFT SIDEBAR — fixed, no scroll
+   ════════════════════════════════════════ */
+		.lab-sidebar {
+			background: var(--card);
+			border-right: 1px solid var(--border);
+			display: flex;
+			flex-direction: column;
+			overflow: hidden;
+			position: relative;
+		}
+
+		/* Category tabs */
+		.cat-strip {
+			display: flex;
+			border-bottom: 1px solid var(--border);
+			flex-shrink: 0;
+		}
+
+		.ctab {
+			flex: 1;
+			font-family: 'Space Mono', monospace;
+			font-size: .4rem;
+			letter-spacing: .16em;
+			text-transform: uppercase;
+			color: var(--muted);
+			background: none;
+			border: none;
+			border-right: 1px solid var(--border);
+			padding: .65rem .5rem;
+			cursor: pointer;
+			position: relative;
+			transition: color .2s, background .2s;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			gap: .3rem;
+		}
+
+		.ctab:last-child {
+			border-right: none;
+		}
+
+		.cdot {
+			width: 4px;
+			height: 4px;
+			border-radius: 50%;
+			flex-shrink: 0;
+			transition: transform .2s;
+		}
+
+		.ctab.s1 .cdot {
+			background: var(--wing);
+		}
+
+		.ctab.s2 .cdot {
+			background: var(--peach);
+		}
+
+		.ctab.s3 .cdot {
+			background: var(--blush);
+		}
+
+		.ctab::after {
+			content: '';
+			position: absolute;
+			bottom: 0;
+			left: 0;
+			right: 0;
+			height: 1.5px;
+			transform: scaleX(0);
+			transform-origin: left;
+			transition: transform .28s cubic-bezier(.22, 1, .36, 1);
+		}
+
+		.ctab.s1::after {
+			background: var(--wing);
+		}
+
+		.ctab.s2::after {
+			background: var(--peach);
+		}
+
+		.ctab.s3::after {
+			background: var(--blush);
+		}
+
+		.ctab:hover {
+			color: var(--ink2);
+			background: rgba(255, 255, 255, .4);
+		}
+
+		.ctab.active {
+			color: var(--ink);
+		}
+
+		.ctab.active .cdot {
+			transform: scale(1.6);
+		}
+
+		.ctab.active::after {
+			transform: scaleX(1);
+		}
+
+		/* Lab meta — scrolled watermark number + count */
+		.lab-meta {
+			padding: 1.6rem 2rem 0;
+			display: flex;
+			align-items: baseline;
+			gap: .6rem;
+			flex-shrink: 0;
+		}
+
+		.lab-big-num {
+			font-family: 'Cormorant', serif;
+			font-size: 5rem;
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: -.05em;
+			color: rgba(200, 176, 168, .12);
+			user-select: none;
+		}
+
+		.lab-counter {
+			font-family: 'Space Mono', monospace;
+			font-size: .44rem;
+			letter-spacing: .16em;
+			text-transform: uppercase;
+			color: var(--muted);
+			padding-bottom: .4rem;
+		}
+
+		/* ── SYNC PANEL — the part that updates on scroll ── */
+		.sync-panel {
+			flex: 1;
+			padding: 0 2rem 2rem;
+			display: flex;
+			flex-direction: column;
+			gap: 1rem;
+			overflow: hidden;
+			transition: opacity .28s ease, transform .28s cubic-bezier(.22, 1, .36, 1);
+		}
+
+		.sync-panel.fading {
+			opacity: 0;
+			transform: translateY(6px);
+		}
+
+		.sp-num {
+			font-family: 'Cormorant', serif;
+			font-size: 1rem;
+			font-weight: 700;
+			color: rgba(200, 176, 168, .35);
+			line-height: 1;
+		}
+
+		.sp-label {
+			font-family: 'Space Mono', monospace;
+			font-size: .42rem;
+			letter-spacing: .18em;
+			text-transform: uppercase;
+			color: var(--blush);
+			display: flex;
+			align-items: center;
+			gap: .4rem;
+		}
+
+		.sp-label::before {
+			content: '';
+			width: 10px;
+			height: 1px;
+			background: var(--blush);
+		}
+
+		.sp-title {
+			font-family: 'Cormorant', serif;
+			font-size: clamp(1.5rem, 2.8vw, 2.2rem);
+			font-weight: 700;
+			line-height: 1.0;
+			letter-spacing: -.02em;
+			color: var(--ink);
+		}
+
+		.sp-title em {
+			font-style: italic;
+			font-weight: 300;
+			color: var(--blush);
+		}
+
+		.sp-desc {
+			font-size: .73rem;
+			line-height: 1.82;
+			color: var(--ink2);
+			flex: 1;
+		}
+
+		.sp-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: .22rem;
+		}
+
+		.sp-tag {
+			font-family: 'Space Mono', monospace;
+			font-size: .38rem;
+			letter-spacing: .1em;
+			text-transform: uppercase;
+			color: var(--muted);
+			border: 1px solid var(--border);
+			padding: .12rem .44rem;
+		}
+
+		.sp-tag.hi {
+			color: var(--blush);
+			border-color: rgba(232, 168, 176, .38);
+		}
+
+		.sp-ctas {
+			display: flex;
+			flex-direction: column;
+			gap: .4rem;
+			margin-top: .2rem;
+		}
+
+		.sp-btn-primary {
+			font-family: 'Space Mono', monospace;
+			font-size: .42rem;
+			letter-spacing: .14em;
+			text-transform: uppercase;
+			color: var(--ink);
+			text-decoration: none;
+			border: 1px solid rgba(200, 176, 168, .42);
+			padding: .55rem .9rem;
+			display: inline-flex;
+			align-items: center;
+			justify-content: space-between;
+			position: relative;
+			overflow: hidden;
+			cursor: pointer;
+			background: none;
+			transition: color .28s, border-color .28s;
+		}
+
+		.sp-btn-primary::before {
+			content: '';
+			position: absolute;
+			inset: 0;
+			background: var(--ink);
+			transform: translateX(-101%);
+			transition: transform .32s cubic-bezier(.76, 0, .24, 1);
+			z-index: 0;
+		}
+
+		.sp-btn-primary span,
+		.sp-btn-primary svg {
+			position: relative;
+			z-index: 1;
+		}
+
+		.sp-btn-primary:hover {
+			color: #fff;
+			border-color: var(--ink);
+		}
+
+		.sp-btn-primary:hover::before {
+			transform: translateX(0);
+		}
+
+		.sp-btn-primary svg {
+			width: 9px;
+			height: 9px;
+			stroke: currentColor;
+			fill: none;
+			stroke-width: 2;
+		}
+
+		.sp-btn-ghost {
+			font-family: 'Space Mono', monospace;
+			font-size: .42rem;
+			letter-spacing: .14em;
+			text-transform: uppercase;
+			color: var(--muted);
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			gap: .35rem;
+			transition: color .2s, gap .2s;
+		}
+
+		.sp-btn-ghost:hover {
+			color: var(--ink);
+			gap: .55rem;
+		}
+
+		.sp-btn-ghost svg {
+			width: 9px;
+			height: 9px;
+			stroke: currentColor;
+			fill: none;
+			stroke-width: 2;
+		}
+
+		/* WIP notice */
+		.sp-wip {
+			padding: .8rem;
+			border: 1px dashed rgba(200, 176, 168, .35);
+			background: rgba(200, 176, 168, .05);
+			margin-top: auto;
+		}
+
+		.sp-wip-text {
+			font-size: .65rem;
+			line-height: 1.72;
+			color: var(--muted);
+		}
+
+		.sp-wip-text strong {
+			color: var(--ink2);
+			font-weight: 500;
+		}
+
+		/* Empty state */
+		.sp-empty {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: .7rem;
+			opacity: .3;
+		}
+
+		.sp-empty-glyph {
+			font-size: 1.6rem;
+		}
+
+		.sp-empty-text {
+			font-family: 'Space Mono', monospace;
+			font-size: .42rem;
+			letter-spacing: .18em;
+			text-transform: uppercase;
+			color: var(--muted);
+			text-align: center;
+			line-height: 1.9;
+		}
+
+		/* Scroll progress bar — bottom of sidebar */
+		.scroll-track {
+			height: 2px;
+			background: var(--border);
+			flex-shrink: 0;
+		}
+
+		.scroll-fill {
+			height: 100%;
+			background: var(--blush);
+			width: 0%;
+			transition: width .1s linear;
+		}
+
+		/* ════════════════════════════════════════
+   RIGHT PANEL — the scrollable editorial canvas
+   ════════════════════════════════════════ */
+		.proj-scroll {
+			overflow-y: scroll;
+			overflow-x: hidden;
+			scroll-snap-type: y proximity;
+			background: var(--stage);
+			position: relative;
+
+			/* Guillaume's breathing room */
+			padding: 12vh 10vw 20vh;
+		}
+
+		/* Subtle right-panel grain */
+		.proj-scroll::before {
+			content: '';
+			position: sticky;
+			top: 0;
+			left: 0;
+			display: block;
+			width: 100%;
+			height: 0;
+			pointer-events: none;
+		}
+
+		/* Large category watermark in right panel */
+		.cat-watermark {
+			position: fixed;
+			top: calc(var(--nav-h) + 2rem);
+			right: 3rem;
+			font-family: 'Cormorant', serif;
+			font-size: clamp(5rem, 12vw, 11rem);
+			font-weight: 700;
+			line-height: 1;
+			letter-spacing: -.06em;
+			color: rgba(200, 176, 168, .06);
+			pointer-events: none;
+			user-select: none;
+			z-index: 1;
+			transition: opacity .5s;
+		}
+
+		/* ── PROJECT CARD ── */
+		.pcard {
+			width: 70%;
+			margin-bottom: 22vh;
+			scroll-snap-align: center;
+			position: relative;
+			cursor: pointer;
+			/* Entrance animation on load */
+			opacity: 0;
+			transform: translateY(32px);
+			transition: opacity .7s cubic-bezier(.22, 1, .36, 1), transform .7s cubic-bezier(.22, 1, .36, 1);
+		}
+
+		.pcard.revealed {
+			opacity: 1;
+			transform: translateY(0);
+		}
+
+		/* Alternating alignment — the editorial offset */
+		.pcard:nth-child(odd) {
+			margin-right: auto;
+		}
+
+		.pcard:nth-child(even) {
+			margin-left: auto;
+		}
+
+		/* Project number — subtle corner label */
+		.pcard-num {
+			position: absolute;
+			top: -.05em;
+			left: 0;
+			font-family: 'Cormorant', serif;
+			font-size: .85rem;
+			font-weight: 700;
+			color: rgba(200, 176, 168, .35);
+			line-height: 1;
+			transform: translateY(-100%) translateY(-.4rem);
+			pointer-events: none;
+		}
+
+		/* Media container */
+		.pcard-media {
+			width: 100%;
+			position: relative;
+			overflow: hidden;
+			box-shadow: 0 40px 80px rgba(42, 31, 26, .11), 0 14px 30px rgba(42, 31, 26, .07);
+			transition: box-shadow .4s;
+		}
+
+		.pcard:hover .pcard-media {
+			box-shadow: 0 50px 100px rgba(42, 31, 26, .16), 0 20px 40px rgba(42, 31, 26, .10);
+		}
+
+		.pcard-media img {
+			display: block;
+			width: 100%;
+			height: auto;
+			object-fit: cover;
+		}
+
+		.pcard-media video {
+			display: block;
+			width: 100%;
+			height: auto;
+			object-fit: cover;
+			max-height: 70vh;
+		}
+
+		/* Placeholder card (for color / spline / wip types) */
+		.pcard-ph {
+			width: 100%;
+			aspect-ratio: 16/9;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: .8rem;
+		}
+
+		.pcard-ph-icon {
+			font-size: 2rem;
+			opacity: .4;
+		}
+
+		.pcard-ph-type {
+			font-family: 'Space Mono', monospace;
+			font-size: .5rem;
+			letter-spacing: .2em;
+			text-transform: uppercase;
+			opacity: .45;
+		}
+
+		.pcard-ph-action {
+			font-family: 'Space Mono', monospace;
+			font-size: .46rem;
+			letter-spacing: .16em;
+			text-transform: uppercase;
+			color: inherit;
+			border: 1px solid currentColor;
+			padding: .45rem 1rem;
+			opacity: .5;
+			text-decoration: none;
+			display: flex;
+			align-items: center;
+			gap: .4rem;
+			margin-top: .5rem;
+			transition: opacity .2s;
+		}
+
+		.pcard-ph-action:hover {
+			opacity: .85;
+		}
+
+		.pcard-ph-action svg {
+			width: 9px;
+			height: 9px;
+			stroke: currentColor;
+			fill: none;
+			stroke-width: 2;
+		}
+
+		/* WIP card */
+		.pcard-wip .pcard-media {
+			aspect-ratio: 16/9;
+			border: 1.5px dashed rgba(200, 176, 168, .35);
+			background: rgba(200, 176, 168, .04);
+			box-shadow: none;
+		}
+
+		.pcard-wip:hover .pcard-media {
+			box-shadow: none;
+		}
+
+		/* ════════════════════════════════════════
+   RESPONSIVE
+   ════════════════════════════════════════ */
+		@media (max-width: 900px) {
+			.projects-wrap {
+				grid-template-columns: 260px 1fr;
+			}
+
+			.proj-scroll {
+				padding: 10vh 6vw 18vh;
+			}
+
+			.pcard {
+				width: 80%;
+			}
+		}
+
+		@media (max-width: 640px) {
+			body {
+				overflow: auto;
+			}
+
+			.projects-wrap {
+				grid-template-columns: 1fr;
+				height: auto;
+			}
+
+			.lab-sidebar {
+				max-height: 55vh;
+			}
+
+			.proj-scroll {
+				padding: 6vh 5vw 14vh;
+			}
+
+			.pcard {
+				width: 100%;
+			}
+
+			.cat-watermark {
+				display: none;
+			}
+		}
+
+	</style>
+</head>
+
+<body>
+
+	<div id="cur"></div>
+	<div class="sphere" id="sphere"></div>
+
+	<!-- ══ TOP NAV ══ -->
+	<header class="top-nav">
+		<a href="index.html" class="nav-logo">Jiarui <em>Yao</em></a>
+		<a href="index.html" class="nav-home">
+			<svg viewBox="0 0 24 24">
+				<line x1="19" y1="12" x2="5" y2="12" />
+				<polyline points="12 19 5 12 12 5" />
+			</svg>
+			Home
+		</a>
+	</header>
+
+	<!-- ══ CATEGORY WATERMARK (fixed in right panel) ══ -->
+	<div class="cat-watermark" id="cat-watermark">01</div>
+
+	<!-- ══ MAIN SHELL ══ -->
+	<div class="projects-wrap">
+
+		<!-- ── LEFT SIDEBAR ── -->
+		<aside class="lab-sidebar">
+
+			<!-- Category tabs -->
+			<div class="cat-strip">
+				<button class="ctab s1 active" data-cat="spatial">
+					<span class="cdot"></span>Spatial
+				</button>
+				<button class="ctab s2" data-cat="systems">
+					<span class="cdot"></span>Systems
+				</button>
+				<button class="ctab s3" data-cat="narrative">
+					<span class="cdot"></span>Narrative
+				</button>
+			</div>
+
+			<!-- Lab number + counter -->
+			<div class="lab-meta">
+				<div class="lab-big-num" id="lab-big-num">01</div>
+				<div class="lab-counter" id="lab-counter">— 6 projects</div>
+			</div>
+
+			<!-- SYNC PANEL — updates via IntersectionObserver -->
+			<div class="sync-panel" id="sync-panel">
+				<div class="sp-empty">
+					<div class="sp-empty-glyph">◎</div>
+					<p class="sp-empty-text">Scroll to explore<br>or click any project</p>
+				</div>
+			</div>
+
+			<!-- Scroll progress bar -->
+			<div class="scroll-track">
+				<div class="scroll-fill" id="scroll-fill"></div>
+			</div>
+
+		</aside>
+
+		<!-- ── RIGHT SCROLL CANVAS ── -->
+		<div class="proj-scroll" id="proj-scroll">
+			<!-- Populated by JS -->
+		</div>
+
+	</div>
+
+	<script>
+		/* ════════════════════════════════════════
+   PROJECT DATABASE
+   ════════════════════════════════════════ */
+		const DB = {
+
+			spatial: {
+				num: '01',
+				label: 'Sensory & Spatial',
+				count: 8,
+				accent: '#b8cce0',
+				projects: [{
+						id: 'sound',
+						num: '10',
+						title: 'The Sound of Melting',
+						titleEm: '',
+						label: 'P5.js · Sound Design · Web Audio · 2026',
+						desc: 'Voice as physical force — three interaction contracts mapping sound to material state change. Smash explodes. Melt droops. Freeze crystallises in silence.',
+						tags: ['P5.js', 'Sound Design', 'Physics Engine', 'Web Audio API'],
+						hiTags: ['P5.js', 'Sound Design'],
+						media: {
+							type: 'image',
+							src: 'imag/project/10.png',
+							ratio: '4/3'
+						},
+						caseStudy: 'case-study-sound-of-melting.html',
+					},
+					{
+						id: 'soundtrack',
+						num: '05',
+						title: 'Visual Soundtrack',
+						titleEm: '— Audio Visualisation',
+						label: 'After Effects · Motion Design · 2025',
+						desc: 'Music has a shape. Every beat, pause, and crescendo translated into form, colour, and tension — sound made permanently and precisely visible.',
+						tags: ['After Effects', 'Motion Design', 'Audio Visualisation'],
+						hiTags: ['After Effects'],
+						media: {
+							type: 'video',
+							src: 'imag/project/01b.mp4'
+						},
+					},
+					{
+						id: 'spline1',
+						num: 'S1',
+						title: 'Spline — Model 01',
+						titleEm: '',
+						label: 'Spline · 3D Web · Fall 2025',
+						desc: 'Real-time 3D in the browser. Spatial form made explorable without installation — drag and rotate to inspect geometry and material.',
+						tags: ['Spline', '3D Web', 'Interactive', 'Real-time'],
+						hiTags: ['Spline', '3D Web'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s1.png'
+						},
+						extLink: 'https://my.spline.design/untitled-pRHpCFJDK6GkEhsQJQWNaD7w/',
+					},
+					{
+						id: 'spline2',
+						num: 'S2',
+						title: 'Spline — Model 02',
+						titleEm: '',
+						label: 'Spline · 3D Web · Fall 2025',
+						desc: 'Second spatial model — material and light in a browser-native 3D environment. Each form studies how geometry communicates weight and presence.',
+						tags: ['Spline', '3D Web', 'Geometry'],
+						hiTags: ['Spline'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s2.png'
+						},
+						extLink: 'https://my.spline.design/untitled-Q4wgvoaUhwAVtkg7Cjcl0IOQ/',
+					},
+					{
+						id: 'spline3',
+						num: 'S3',
+						title: 'Spline — Model 03',
+						titleEm: '',
+						label: 'Spline · 3D Web · Fall 2025',
+						desc: 'Third model — texture and surface in motion. Designed to be experienced in real-time, not observed as a static image.',
+						tags: ['Spline', '3D Web', 'Texture'],
+						hiTags: ['Spline'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s3.png'
+						},
+						extLink: 'https://my.spline.design/untitled-jA50R47Pngz06ZE3BdCPxRrx/',
+					},
+					{
+						id: 'surface',
+						num: '11',
+						title: 'Surface —',
+						titleEm: 'Projection Mapping',
+						label: 'After Effects · Architectural Motion · 2025',
+						desc: 'A building that narrates. Structure dissolved into 90 seconds of choreographed light — architectural surface becomes screen.',
+						tags: ['Projection Mapping', 'After Effects', 'Architecture', 'Motion'],
+						hiTags: ['Projection Mapping'],
+						media: {
+							type: 'video',
+							src: 'imag/project/11.MP4'
+						},
+						caseStudy: 'case-study-surface.html',
+					},
+					{
+						id: 'doodle',
+						num: 'S4',
+						title: 'Spline —',
+						titleEm: 'Google Doodle',
+						label: 'Spline · 3D Web · Brand Identity · 2025',
+						desc: 'A Google Doodle concept built entirely in Spline — an interactive 3D clock face with Roman numerals, brand integration, and 3D-modelled objects. Spatial interaction meets identity design.',
+						tags: ['Spline', '3D Web', 'Google Doodle', 'Brand'],
+						hiTags: ['Spline', 'Google Doodle'],
+						media: {
+							type: 'image',
+							src: 'imag/project/doodle.png'
+						},
+						extLink: '',
+					},
+					{
+						id: 'vr',
+						num: 'VR',
+						title: 'AR Video —',
+						titleEm: 'VR Experience',
+						label: 'AR · VR · Spatial Computing · 2025',
+						desc: 'Layering digital information over physical space — an augmented reality video project exploring how virtual objects inhabit real environments. Space as canvas, presence as material.',
+						tags: ['AR', 'VR', 'Spatial Video', 'Immersive'],
+						hiTags: ['AR', 'VR'],
+						media: {
+							type: 'video',
+							src: 'imag/project/vr.mp4'
+						},
+					},
+				],
+			},
+
+			systems: {
+				num: '02',
+				label: 'Systems & Strategy',
+				count: 7,
+				accent: '#f2c89a',
+				projects: [{
+						id: 'ontario',
+						num: '07',
+						title: "Ontario Traveller's Helper",
+						titleEm: '',
+						label: 'JavaScript · Leaflet.js · API Integration · 2025',
+						desc: '7-day forecast, live map, and departure airport unified in a single scroll. Raw meteorological data turned into a readable journey-planning tool.',
+						tags: ['JavaScript', 'Leaflet.js', 'Open-Meteo API', 'Web App'],
+						hiTags: ['JavaScript', 'Leaflet.js'],
+						media: {
+							type: 'image',
+							src: 'imag/project/07.png'
+						},
+						extLink: 'https://yaojiar.phoenix.sheridanc.on.ca/Jiarui_Yao_IXD_Behaviours_Project2%20-21/',
+					},
+					{
+						id: 'extreme',
+						num: '01',
+						title: 'Extreme Sports —',
+						titleEm: 'Information Architecture',
+						label: 'HTML · CSS · Information Architecture · 2024',
+						desc: 'What does speed feel like before a single word is read? Layout structure as emotional design — hierarchy performing the adrenaline.',
+						tags: ['HTML', 'CSS', 'Layout', 'Information Architecture'],
+						hiTags: ['HTML', 'CSS'],
+						media: {
+							type: 'image',
+							src: 'imag/project/01.png'
+						},
+						extLink: 'https://yaojiar.phoenix.sheridanc.on.ca/extreme_sports_wireframe2/',
+					},
+					{
+						id: 'applewatch',
+						num: '02',
+						title: 'Apple Watch —',
+						titleEm: 'Heart Rate Alarm UI',
+						label: 'Figma · Health IxD · UI Analysis · 2024',
+						desc: 'At what point does a number become something you cannot ignore? Colour theory and cognitive load at the limit of human reaction time.',
+						tags: ['Figma', 'Health IxD', 'UI Analysis', 'Cognitive Load'],
+						hiTags: ['Figma', 'Health IxD'],
+						media: {
+							type: 'image',
+							src: 'imag/project/02.png'
+						},
+						caseStudy: 'case-study-apple-watch.html',
+					},
+					{
+						id: 'datamap',
+						num: 'S5',
+						title: 'Code —',
+						titleEm: 'Data Map',
+						label: 'JavaScript · Data Visualisation · Mapping · 2025',
+						desc: 'Spatial data made legible through code. Raw geographic information turned into a navigable, readable interface.',
+						tags: ['JavaScript', 'Data Viz', 'Mapping'],
+						hiTags: ['JavaScript'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s5.jpeg'
+						},
+					},
+					{
+						id: 'strategy',
+						num: 'S6',
+						title: 'Design Strategy P3',
+						titleEm: '',
+						label: 'Design Strategy · Systems Research · 2025',
+						desc: 'A systems-level strategy project mapping how stakeholder needs, constraints, and opportunities shape a design outcome.',
+						tags: ['Strategy', 'Research', 'Systems Thinking'],
+						hiTags: ['Strategy'],
+						media: {
+							type: 'video',
+							src: 'imag/project/s6.mp4'
+						},
+					},
+					{
+						id: 'usability',
+						num: 'S7',
+						title: 'Usability Lab Testing',
+						titleEm: '',
+						label: 'UX Research · Usability Testing · 2025',
+						desc: 'A formal usability study surfacing friction points that are invisible to the designer but immediately visible to the user.',
+						tags: ['Usability Testing', 'UX Research'],
+						hiTags: ['Usability Testing'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s7.png'
+						},
+					},
+					{
+						id: 'webtemplate',
+						num: 'S8',
+						title: 'The Kite Runner —',
+						titleEm: 'Book Cover Design',
+						label: 'Editorial Design · Print · Book Design · 2026',
+						desc: 'A full book cover design for Khaled Hosseini\'s The Kite Runner — front cover, spine, and back cover as a unified layout system. Typography, illustration, and colour working as a single argument.',
+						tags: ['Editorial Design', 'Book Cover', 'Print', 'Typography'],
+						hiTags: ['Editorial Design', 'Typography'],
+						media: {
+							type: 'image',
+							src: 'imag/project/s8.png'
+						},
+					},
+				],
+			},
+
+			narrative: {
+				num: '03',
+				label: 'Visual Narrative',
+				count: 7,
+				accent: '#e8a8b0',
+				projects: [{
+						id: 'dreamer',
+						num: '08',
+						title: 'Dreamer.25 —',
+						titleEm: 'Brand as Environment',
+						label: 'Web · Brand · Immersive Experience · 2025',
+						desc: "Visitors don't browse — they move through it. Scroll-choreographed atmospheric scenes replace conventional navigation. Brand dissolved into atmosphere.",
+						tags: ['Web', 'Brand', 'Immersive', 'GSAP'],
+						hiTags: ['Web', 'Brand'],
+						media: {
+							type: 'image',
+							src: 'imag/project/08.png'
+						},
+						caseStudy: 'case-study-dreamer.html',
+					},
+					{
+						id: 'hook',
+						num: '03',
+						title: 'HOOK —',
+						titleEm: 'Canadian F1 Brand',
+						label: 'Illustrator · Brand Identity System · 2024',
+						desc: 'A logomark encoding speed, grip, and solidarity in one gesture. Full identity: type, colour, livery, uniforms, environmental signage.',
+						tags: ['Brand Identity', 'Illustrator', 'Logo', 'F1'],
+						hiTags: ['Brand Identity'],
+						media: {
+							type: 'image',
+							src: 'imag/project/hook-logo.png'
+						},
+						caseStudy: 'case-study-hook.html',
+					},
+					{
+						id: 'mcluhan',
+						num: '04',
+						title: 'The Medium is the Message',
+						titleEm: '',
+						label: 'Media Theory · Empirical Research · 2024',
+						desc: "McLuhan tested empirically. Same campaign, Gmail vs Discord — quantifying the container's effect on brand perception.",
+						tags: ['Media Theory', 'Research', 'Pathos', 'Ethos'],
+						hiTags: ['Media Theory'],
+						media: {
+							type: 'image',
+							src: 'imag/project/04.png'
+						},
+					},
+					{
+						id: 'editorial',
+						num: 'N1',
+						title: 'Layout Process —',
+						titleEm: 'Editorial Design',
+						label: 'Typography · Editorial Layout · 2025',
+						desc: 'Typography as architecture. An editorial layout project exploring the relationship between text, image, and white space as a compositional system.',
+						tags: ['Typography', 'Layout', 'Editorial', 'InDesign'],
+						hiTags: ['Typography'],
+						media: {
+							type: 'image',
+							src: 'imag/project/n1.png'
+						},
+					},
+					{
+						id: 'persuasive',
+						num: 'N2',
+						title: 'Persuasive Landing Page',
+						titleEm: '',
+						label: 'Persuasive Design · Web · Rhetoric · 2026',
+						desc: 'A landing page where every scroll, image, and copy line is a deliberate argument about what the visitor should feel and do next.',
+						tags: ['Landing Page', 'Persuasive Design', 'Web', 'Rhetoric'],
+						hiTags: ['Persuasive Design'],
+						media: {
+							type: 'image',
+							src: 'imag/project/n2.png'
+						},
+					},
+					{
+						id: 'signin',
+						num: 'N3',
+						title: 'Sign-In Web Page —',
+						titleEm: 'Auth UX',
+						label: 'UI Design · Authentication UX · Web · 2026',
+						desc: 'A sign-in page that treats authentication as a brand statement — reducing friction while maintaining the visual language of the product.',
+						tags: ['UI Design', 'Sign-In Flow', 'Auth UX'],
+						hiTags: ['UI Design'],
+						media: {
+							type: 'image',
+							src: 'imag/project/n3.png'
+						},
+					},
+					{
+						id: 'cssa',
+						num: '★',
+						title: 'CSSA —',
+						titleEm: 'Strategy & Operations',
+						label: 'Leadership · Organisational Design · 2024–2026',
+						desc: 'Restructuring a 500-member organisation using design thinking — treasury flow, event pipeline, cross-team communication, and first unified visual identity.',
+						tags: ['Leadership', '500-Member Org', 'Systems Design', 'CCR'],
+						hiTags: ['Leadership'],
+						media: {
+							type: 'image',
+							src: 'imag/project/cssa.jpg'
+						},
+					},
+				],
+			},
+		};
+
+		/* ════════════════════════════════════════
+		   STATE
+		   ════════════════════════════════════════ */
+		let currentCat = 'spatial';
+		let currentProjId = null;
+		let cardObserver = null;
+		let revealObserver = null;
+
+		/* ════════════════════════════════════════
+		   BUILD CARD MEDIA
+		   ════════════════════════════════════════ */
+		function buildCardMedia(proj) {
+			const m = proj.media;
+			const wrap = document.createElement('div');
+			wrap.className = 'pcard-media';
+
+			if (m.type === 'image') {
+				const img = document.createElement('img');
+				img.src = m.src;
+				img.alt = proj.title;
+				img.loading = 'lazy';
+				if (m.ratio) img.style.aspectRatio = m.ratio;
+				wrap.appendChild(img);
+
+			} else if (m.type === 'video') {
+				const vid = document.createElement('video');
+				vid.muted = true;
+				vid.loop = true;
+				vid.playsInline = true;
+				vid.setAttribute('data-autoplay', '1');
+				const src = document.createElement('source');
+				src.src = m.src;
+				src.type = m.src.endsWith('.mov') ? 'video/quicktime' : 'video/mp4';
+				vid.appendChild(src);
+				wrap.appendChild(vid);
+
+			} else if (m.type === 'color') {
+				const ph = document.createElement('div');
+				ph.className = 'pcard-ph';
+				ph.style.background = m.bg;
+				ph.style.color = m.color || '#fff';
+				ph.innerHTML = `
+      <div class="pcard-ph-icon">${m.icon || '◈'}</div>
+      <div class="pcard-ph-type" style="color:${m.color || 'rgba(255,255,255,.5)'};">${m.typeLabel || ''}</div>
+    `;
+				if (proj.extLink) {
+					ph.innerHTML += `<a href="${proj.extLink}" target="_blank" class="pcard-ph-action" style="color:${m.color || 'rgba(255,255,255,.6)'};">
+        Open Live
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>`;
+				}
+				wrap.appendChild(ph);
+
+			} else if (m.type === 'wip') {
+				const ph = document.createElement('div');
+				ph.className = 'pcard-ph';
+				ph.innerHTML = `
+      <div class="pcard-ph-icon" style="opacity:.2;">◌</div>
+      <div class="pcard-ph-type">In Progress</div>
+    `;
+				wrap.appendChild(ph);
+				wrap.parentElement && wrap.parentElement.classList.add('pcard-wip');
+			}
+
+			return wrap;
+		}
+
+		/* ════════════════════════════════════════
+		   BUILD SINGLE CARD
+		   ════════════════════════════════════════ */
+		function buildCard(proj) {
+			const card = document.createElement('article');
+			card.className = 'pcard' + (proj.media.type === 'wip' ? ' pcard-wip' : '');
+			card.dataset.projId = proj.id;
+
+			// Project number
+			const numEl = document.createElement('div');
+			numEl.className = 'pcard-num';
+			numEl.textContent = proj.num;
+			card.appendChild(numEl);
+
+			// Media
+			const media = buildCardMedia(proj);
+			card.appendChild(media);
+
+			// Click: jump sidebar to this project
+			card.addEventListener('click', () => updateSidebar(proj, true));
+
+			return card;
+		}
+
+		/* ════════════════════════════════════════
+		   RENDER SCROLL CANVAS
+		   ════════════════════════════════════════ */
+		function renderScrollCanvas(cat) {
+			const scroll = document.getElementById('proj-scroll');
+			scroll.innerHTML = '';
+
+			// Kill old observers
+			if (cardObserver) {
+				cardObserver.disconnect();
+				cardObserver = null;
+			}
+			if (revealObserver) {
+				revealObserver.disconnect();
+				revealObserver = null;
+			}
+
+			const projects = DB[cat].projects;
+			projects.forEach(proj => {
+				const card = buildCard(proj);
+				scroll.appendChild(card);
+			});
+
+			// Reset scroll position
+			scroll.scrollTop = 0;
+
+			// Setup observers after a tick (DOM settled)
+			requestAnimationFrame(() => {
+				setupRevealObserver();
+				setupCardObserver(cat);
+				setupVideoObserver();
+				setupScrollProgress(scroll);
+			});
+		}
+
+		/* ════════════════════════════════════════
+		   INTERSECTION OBSERVER — card reveal
+		   ════════════════════════════════════════ */
+		function setupRevealObserver() {
+			revealObserver = new IntersectionObserver((entries) => {
+				entries.forEach(e => {
+					if (e.isIntersecting) {
+						e.target.classList.add('revealed');
+						revealObserver.unobserve(e.target);
+					}
+				});
+			}, {
+				threshold: 0.08,
+				rootMargin: '0px 0px -60px 0px'
+			});
+
+			document.querySelectorAll('.pcard').forEach(c => revealObserver.observe(c));
+		}
+
+		/* ════════════════════════════════════════
+		   INTERSECTION OBSERVER — card → sidebar sync
+		   THE KEY INTERACTION
+		   ════════════════════════════════════════ */
+		function setupCardObserver(cat) {
+			const projects = DB[cat].projects;
+			const projMap = {};
+			projects.forEach(p => projMap[p.id] = p);
+
+			// Trigger when card is 35-65% visible (center of viewport)
+			cardObserver = new IntersectionObserver((entries) => {
+				// Find the most visible card
+				let maxRatio = 0;
+				let bestProj = null;
+
+				entries.forEach(e => {
+					if (e.isIntersecting && e.intersectionRatio > maxRatio) {
+						maxRatio = e.intersectionRatio;
+						const proj = projMap[e.target.dataset.projId];
+						if (proj) bestProj = proj;
+					}
+				});
+
+				if (bestProj && bestProj.id !== currentProjId) {
+					currentProjId = bestProj.id;
+					updateSidebar(bestProj, false);
+				}
+			}, {
+				threshold: [0, 0.2, 0.4, 0.5, 0.6],
+				rootMargin: '-15% 0px -15% 0px'
+			});
+
+			document.querySelectorAll('.pcard').forEach(c => cardObserver.observe(c));
+		}
+
+		/* ════════════════════════════════════════
+		   VIDEO AUTOPLAY on scroll into view
+		   ════════════════════════════════════════ */
+		function setupVideoObserver() {
+			const videoObs = new IntersectionObserver((entries) => {
+				entries.forEach(e => {
+					const vid = e.target.querySelector('video[data-autoplay]');
+					if (!vid) return;
+					if (e.isIntersecting) {
+						vid.play().catch(() => {});
+					} else {
+						vid.pause();
+					}
+				});
+			}, {
+				threshold: 0.3
+			});
+
+			document.querySelectorAll('.pcard').forEach(c => videoObs.observe(c));
+		}
+
+		/* ════════════════════════════════════════
+		   SCROLL PROGRESS BAR
+		   ════════════════════════════════════════ */
+		function setupScrollProgress(scrollEl) {
+			const fill = document.getElementById('scroll-fill');
+			scrollEl.addEventListener('scroll', () => {
+				const pct = scrollEl.scrollTop / (scrollEl.scrollHeight - scrollEl.clientHeight) * 100;
+				fill.style.width = Math.min(100, pct) + '%';
+			}, {
+				passive: true
+			});
+		}
+
+		/* ════════════════════════════════════════
+		   UPDATE SIDEBAR — the crossfade
+		   ════════════════════════════════════════ */
+		function updateSidebar(proj, scrollIntoView) {
+			const panel = document.getElementById('sync-panel');
+
+			// Fade out
+			panel.classList.add('fading');
+
+			setTimeout(() => {
+				const hiSet = new Set(proj.hiTags || []);
+				const tagHTML = proj.tags.map(t =>
+					`<span class="sp-tag ${hiSet.has(t) ? 'hi' : ''}">${t}</span>`
+				).join('');
+
+				const titleFull = proj.titleEm ?
+					`${proj.title}<br><em>${proj.titleEm}</em>` :
+					proj.title;
+
+				let ctaHTML = '';
+				if (proj.caseStudy) {
+					ctaHTML += `<a href="${proj.caseStudy}" class="sp-btn-primary">
+        <span>Read Case Study</span>
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>`;
+				}
+				if (proj.extLink) {
+					ctaHTML += `<a href="${proj.extLink}" target="_blank" class="sp-btn-ghost">
+        Open Live
+        <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>`;
+				}
+
+				const wipHTML = proj.media.type === 'wip' ?
+					`<div class="sp-wip"><p class="sp-wip-text"><strong>In Progress</strong> — Currently being documented. Reach out for a walkthrough.</p></div>` :
+					'';
+
+				panel.innerHTML = `
+      <div class="sp-num">${proj.num}</div>
+      <div class="sp-label">${proj.label}</div>
+      <div class="sp-title">${titleFull}</div>
+      <div class="sp-desc">${proj.desc}</div>
+      <div class="sp-tags">${tagHTML}</div>
+      ${ctaHTML ? `<div class="sp-ctas">${ctaHTML}</div>` : ''}
+      ${wipHTML}
+    `;
+
+				// Fade in
+				panel.classList.remove('fading');
+
+				// Re-bind cursor for new buttons
+				panel.querySelectorAll('a, button').forEach(el => {
+					el.addEventListener('mouseenter', () => cur.style.transform = 'translate(-50%,-50%) scale(2.2)');
+					el.addEventListener('mouseleave', () => cur.style.transform = 'translate(-50%,-50%) scale(1)');
+				});
+
+				// Optionally scroll the card into view (when clicked)
+				if (scrollIntoView) {
+					const card = document.querySelector(`[data-proj-id="${proj.id}"]`);
+					if (card) card.scrollIntoView({
+						behavior: 'smooth',
+						block: 'center'
+					});
+				}
+
+			}, 280);
+		}
+
+		/* ════════════════════════════════════════
+		   SWITCH CATEGORY
+		   ════════════════════════════════════════ */
+		function switchCat(cat) {
+			currentCat = cat;
+			currentProjId = null;
+
+			// Update tabs
+			document.querySelectorAll('.ctab').forEach(t =>
+				t.classList.toggle('active', t.dataset.cat === cat)
+			);
+
+			const data = DB[cat];
+			document.getElementById('lab-big-num').textContent = data.num;
+			document.getElementById('lab-counter').textContent = `— ${data.count} projects`;
+			document.getElementById('cat-watermark').textContent = data.num;
+
+			// Reset sidebar
+			const panel = document.getElementById('sync-panel');
+			panel.innerHTML = `
+    <div class="sp-empty">
+      <div class="sp-empty-glyph">◎</div>
+      <p class="sp-empty-text">Scroll to explore</p>
+    </div>
+  `;
+			document.getElementById('scroll-fill').style.width = '0%';
+
+			renderScrollCanvas(cat);
+		}
+
+		/* ════════════════════════════════════════
+		   INIT
+		   ════════════════════════════════════════ */
+		document.querySelectorAll('.ctab').forEach(tab => {
+			tab.addEventListener('click', () => switchCat(tab.dataset.cat));
+		});
+
+		switchCat('spatial');
+
+		/* ════════════════════════════════════════
+		   CURSOR
+		   ════════════════════════════════════════ */
+		const cur = document.getElementById('cur');
+		document.addEventListener('mousemove', e => {
+			cur.style.left = e.clientX + 'px';
+			cur.style.top = e.clientY + 'px';
+		});
+		document.querySelectorAll('a, button, .pcard').forEach(el => {
+			el.addEventListener('mouseenter', () => cur.style.transform = 'translate(-50%,-50%) scale(2.2)');
+			el.addEventListener('mouseleave', () => cur.style.transform = 'translate(-50%,-50%) scale(1)');
+		});
+
+		/* ════════════════════════════════════════
+		   PEARL SPHERE
+		   ════════════════════════════════════════ */
+		const sphere = document.getElementById('sphere');
+		let mx = innerWidth / 2,
+			my = innerHeight / 2,
+			sx = mx,
+			sy = my;
+		let visible = false,
+			isNear = false;
+
+		document.addEventListener('mousemove', e => {
+			mx = e.clientX;
+			my = e.clientY;
+			if (!visible) {
+				sphere.style.opacity = '1';
+				visible = true;
+			}
+		});
+		document.addEventListener('mouseleave', () => {
+			sphere.style.opacity = '0';
+			visible = false;
+		});
+
+		(function loop() {
+			sx += (mx - sx) * .072;
+			sy += (my - sy) * .072;
+			sphere.style.left = sx + 'px';
+			sphere.style.top = sy + 'px';
+			const dx = (mx - sx) / 15,
+				dy = (my - sy) / 15;
+			const sp = Math.hypot(mx - sx, my - sy),
+				sh = Math.min(sp / 110, 1);
+			const r = Math.round(242 - sh * 58),
+				g = Math.round(200 + sh * 4),
+				b = Math.round(154 + sh * 70);
+			sphere.style.background = `radial-gradient(circle at ${35+dx}% ${35+dy}%,rgba(255,255,255,.95) 0%,rgba(242,235,224,.60) 22%,rgb(${r},${g},${b}) 55%,rgba(42,31,26,1) 100%)`;
+			let near = false;
+			document.querySelectorAll('a,button,.pcard,.sp-title').forEach(el => {
+				const rc = el.getBoundingClientRect();
+				if (Math.hypot(sx - (rc.left + rc.width / 2), sy - (rc.top + rc.height / 2)) < 100) near = true;
+			});
+			if (near !== isNear) {
+				isNear = near;
+				sphere.style.transform = near ? 'translate(-50%,-50%) scale(.42)' : 'translate(-50%,-50%) scale(1.2)';
+				sphere.style.filter = near ? 'blur(26px)' : 'blur(4px)';
+				sphere.style.opacity = near ? (visible ? '.2' : '0') : (visible ? '1' : '0');
+			}
+			requestAnimationFrame(loop);
+		})();
+
+		/* ════════════════════════════════════════
+		   LIQUID VEIL
+		   ════════════════════════════════════════ */
+		(function() {
+			const veil = document.createElement('div');
+			Object.assign(veil.style, {
+				position: 'fixed',
+				inset: '0',
+				zIndex: '99999',
+				background: '#f2ebe0',
+				transformOrigin: 'top center',
+				transform: 'translateY(0)',
+				transition: 'transform 0.72s cubic-bezier(0.76,0,0.24,1)',
+				pointerEvents: 'none'
+			});
+			const sh = document.createElement('div');
+			Object.assign(sh.style, {
+				position: 'absolute',
+				inset: '0',
+				background: 'linear-gradient(135deg,rgba(242,200,154,.2) 0%,transparent 45%,rgba(184,204,224,.15) 100%)'
+			});
+			veil.appendChild(sh);
+			document.body.prepend(veil);
+			veil.getBoundingClientRect();
+			requestAnimationFrame(() => requestAnimationFrame(() => {
+				veil.style.transform = 'translateY(-100%)';
+			}));
+			let nav = false;
+			document.addEventListener('click', e => {
+				const a = e.target.closest('a[href]');
+				if (!a || nav) return;
+				const h = a.getAttribute('href');
+				if (!h || h === '#' || h.startsWith('#') || h.startsWith('http') || a.target === '_blank') return;
+				e.preventDefault();
+				nav = true;
+				veil.style.transition = 'transform 0.58s cubic-bezier(0.76,0,0.24,1)';
+				veil.style.transform = 'translateY(0)';
+				setTimeout(() => {
+					window.location.href = h;
+				}, 580);
+			});
+		})();
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sunny Packing Lists — UX Case Study · Jiarui Yao</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400&family=DM+Sans:wght@200;300;400;500&family=Space+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f2ebe0;--blush:#e8a8b0;--peach:#f2c89a;--wing:#b8cce0;
+  --lilac:#d8c0d8;--ink:#2a1f1a;--ink2:#5a4840;--muted:#a08880;
+  --border:rgba(200,176,168,.18);--glass:rgba(242,235,224,.72);
+  /* Sunny brand colours */
+  --sage:   #c8cdb8;
+  --teal:   #006d6b;
+  --teal2:  #34aaa7;
+  --sand:   #e8e2d0;
+  --sky:    #b8d4dc;
+  --scroll:0;--scroll-p:0;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;font-weight:300;background:var(--cream);color:var(--ink);overflow-x:hidden;cursor:none;}
+body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;opacity:.04;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");background-size:256px 256px;}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 65% 55% at 20% 0%,rgba(200,205,184,.3) 0%,transparent 55%),radial-gradient(ellipse 55% 50% at 85% 35%,rgba(184,212,220,.28) 0%,transparent 55%),radial-gradient(ellipse 50% 45% at 50% 100%,rgba(232,226,208,.35) 0%,transparent 55%);background-color:var(--cream);}
+#cur{width:7px;height:7px;background:var(--teal);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:transform .15s;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.8rem 4rem;transition:background .4s;}
+nav.scrolled{background:rgba(242,235,224,.9);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo{font-family:'Cormorant',serif;font-size:1.1rem;font-weight:700;letter-spacing:.08em;color:var(--ink);text-decoration:none;}
+.nav-logo em{font-style:italic;font-weight:300;color:var(--blush);}
+.nav-back{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s,gap .2s;}
+.nav-back:hover{color:var(--ink);gap:.3rem;}
+
+/* HERO — beach photo full viewport */
+.hero{position:relative;width:100%;height:100vh;display:flex;align-items:flex-end;overflow:hidden;}
+.hero-img{position:absolute;inset:0;overflow:hidden;}
+.hero-img img{width:100%;height:100%;object-fit:cover;object-position:center 30%;display:block;transform:scale(1.04);transition:transform 8s cubic-bezier(.2,.8,.2,1);}
+.hero-img img.loaded{transform:scale(1);}
+.hero-overlay{position:absolute;inset:0;background:linear-gradient(to bottom,rgba(200,205,184,.08) 0%,transparent 35%,rgba(10,50,50,.55) 75%,rgba(0,109,107,.82) 100%);}
+.hero-content{position:relative;z-index:10;padding:0 4rem 4.5rem;width:100%;display:grid;grid-template-columns:1fr auto;align-items:end;gap:3rem;}
+
+/* Logo floating in hero */
+.hero-logo-badge{
+  position:absolute; top:50%; left:4rem;
+  transform:translateY(-50%);
+  z-index:10;
+  opacity:0; animation:floatIn 1s .4s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes floatIn{from{opacity:0;transform:translateY(calc(-50% + 20px));}to{opacity:1;transform:translateY(-50%);}}
+.hero-logo-badge img{width:min(320px,32vw);height:auto;display:block;border-radius:8px;}
+
+.hero-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.28em;text-transform:uppercase;color:rgba(200,230,228,.75);display:flex;align-items:center;gap:.8rem;margin-bottom:1.2rem;}
+.hero-label::before{content:'';width:18px;height:1px;background:var(--teal2);}
+.hero-title{font-family:'Cormorant',serif;font-size:clamp(3.5rem,7.5vw,8rem);font-weight:700;line-height:.88;letter-spacing:-.025em;color:#fff;margin-bottom:.5rem;}
+.hero-title em{display:block;font-style:italic;font-weight:300;color:rgba(200,230,228,.88);}
+.hero-sub{font-family:'Cormorant',serif;font-size:clamp(1rem,1.6vw,1.2rem);font-style:italic;font-weight:300;color:rgba(242,235,224,.6);margin-top:.8rem;}
+.hero-cri{display:flex;flex-direction:column;gap:.4rem;margin-top:2rem;padding-left:1rem;border-left:1px solid rgba(200,230,228,.3);}
+.hero-cri-row{display:grid;grid-template-columns:5rem 1fr;gap:.5rem;align-items:baseline;}
+.hero-cri-label{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.2em;text-transform:uppercase;color:rgba(200,230,228,.65);}
+.hero-cri-text{font-size:.75rem;line-height:1.65;color:rgba(242,235,224,.82);}
+.hero-meta{text-align:right;padding-bottom:.2rem;}
+.hero-params{font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(200,230,228,.5);line-height:2;}
+.hero-params strong{color:rgba(242,235,224,.75);font-weight:400;}
+.hero-scroll{position:absolute;bottom:2rem;left:50%;transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:.4rem;pointer-events:none;z-index:10;opacity:0;animation:fadeIn .8s 1.8s forwards;}
+.hero-scroll span{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.24em;text-transform:uppercase;color:rgba(242,235,224,.4);}
+.hero-scroll-line{width:1px;height:36px;background:linear-gradient(to bottom,rgba(200,230,228,.5),transparent);animation:pulse 2s ease-in-out infinite;}
+@keyframes pulse{0%,100%{transform:scaleY(1);opacity:.5;}50%{transform:scaleY(.4);opacity:.1;}}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+
+/* SECTIONS */
+.section{max-width:1200px;margin:0 auto;padding:8rem 4rem;opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);}
+.section.visible{opacity:1;transform:translateY(0);}
+.s-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;gap:.8rem;margin-bottom:1rem;}
+.s-label::before{content:'';width:18px;height:1px;background:var(--teal);}
+
+/* CONCEPT */
+.concept-bg{background:linear-gradient(135deg,rgba(200,205,184,.2) 0%,var(--cream) 60%);border-top:1px solid rgba(200,205,184,.35);border-bottom:1px solid rgba(200,205,184,.35);}
+.concept-quote{font-family:'Cormorant',serif;font-size:clamp(2.2rem,4.5vw,4.5rem);font-weight:300;font-style:italic;line-height:1.1;letter-spacing:-.02em;color:var(--ink);max-width:860px;margin-bottom:3rem;padding-left:2rem;position:relative;}
+.concept-quote::before{content:'"';position:absolute;left:0;top:-.2em;font-size:1.2em;color:var(--teal);opacity:.4;}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:3rem;}
+.col-label{font-family:'Space Mono',monospace;font-size:.55rem;letter-spacing:.22em;text-transform:uppercase;color:var(--teal);margin-bottom:.8rem;}
+.col-body{font-size:.84rem;line-height:1.95;color:var(--ink2);}
+.col-body+.col-body{margin-top:1rem;}
+
+/* FEATURE OVERVIEW — 5 key screens */
+.screens-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--border);border:1px solid var(--border);margin-top:3rem;}
+.screen-card{background:rgba(255,252,248,.7);padding:1.8rem 1.4rem;position:relative;}
+.screen-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;}
+.screen-card:nth-child(1)::before{background:var(--teal);}
+.screen-card:nth-child(2)::before{background:var(--teal2);}
+.screen-card:nth-child(3)::before{background:var(--sky);}
+.screen-card:nth-child(4)::before{background:var(--sage);}
+.screen-card:nth-child(5)::before{background:var(--peach);}
+.screen-num{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;}
+.screen-title{font-family:'Cormorant',serif;font-size:1.2rem;font-weight:700;color:var(--ink);margin-bottom:.5rem;}
+.screen-body{font-size:.7rem;line-height:1.78;color:var(--muted);}
+
+/* PAPER PROTOTYPE SECTION */
+.proto-bg{background:rgba(200,205,184,.1);border-top:1px solid rgba(200,205,184,.25);border-bottom:1px solid rgba(200,205,184,.25);}
+.proto-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;}
+.proto-img-wrap{border:1px solid var(--border);overflow:hidden;background:#fff;}
+.proto-img-wrap img{width:100%;height:auto;display:block;}
+.proto-caption{font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:.8rem 1rem;background:rgba(255,252,248,.6);border-top:1px solid var(--border);}
+
+/* DECISION SECTION */
+.decision-layout{display:grid;grid-template-columns:1fr 1fr;gap:5rem;align-items:start;}
+.decision-title{font-family:'Cormorant',serif;font-size:clamp(2rem,4vw,3.8rem);font-weight:700;line-height:.92;letter-spacing:-.02em;color:var(--ink);margin-bottom:1.6rem;}
+.decision-title em{color:var(--teal);font-style:italic;font-weight:300;}
+.decision-body{font-size:.84rem;line-height:1.95;color:var(--ink2);margin-bottom:1.2rem;}
+.decision-pullquote{font-family:'Cormorant',serif;font-size:1.35rem;font-style:italic;font-weight:300;line-height:1.45;color:var(--ink);padding:1.5rem 2rem;border-left:3px solid var(--teal);background:rgba(0,109,107,.06);margin-top:1.5rem;}
+.feature-table{display:flex;flex-direction:column;gap:1px;background:var(--border);border:1px solid var(--border);}
+.ft-row{display:grid;grid-template-columns:.7fr 1.4fr;gap:1px;background:var(--border);}
+.ft-key{background:rgba(200,205,184,.2);padding:1.1rem 1.3rem;font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.14em;text-transform:uppercase;color:var(--teal);display:flex;align-items:center;}
+.ft-val{background:rgba(255,252,248,.7);padding:1.1rem 1.3rem;font-size:.76rem;line-height:1.75;color:var(--ink2);}
+
+/* DIGITAL WIREFRAME */
+.wire-bg{background:var(--sand);border-top:1px solid rgba(200,205,184,.3);}
+.wire-section-inner{max-width:1200px;margin:0 auto;padding:8rem 4rem;}
+.wire-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;}
+.wire-img-wrap{background:rgba(255,255,255,.5);border:1px solid var(--border);overflow:hidden;}
+.wire-img-wrap img{width:100%;height:auto;display:block;}
+.wire-caption{padding:1rem 1.2rem;font-family:'Space Mono',monospace;font-size:.48rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);background:rgba(255,255,255,.3);border-top:1px solid var(--border);}
+
+/* REFLECTION */
+.refl-cols{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem;}
+.refl-title{font-family:'Cormorant',serif;font-size:1.3rem;font-weight:700;color:var(--ink);margin-bottom:1.2rem;}
+.refl-list{list-style:none;display:flex;flex-direction:column;gap:.9rem;}
+.refl-list li{font-size:.8rem;line-height:1.82;color:var(--ink2);padding-left:1.2rem;position:relative;}
+.refl-list li::before{content:'·';position:absolute;left:0;color:var(--teal);font-weight:700;}
+
+/* CTA */
+.cta-section{background:var(--teal);padding:7rem 4rem;text-align:center;}
+.cta-label{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.3em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:1.5rem;}
+.cta-title{font-family:'Cormorant',serif;font-size:clamp(2.5rem,5vw,5rem);font-weight:300;font-style:italic;color:rgba(255,255,255,.95);line-height:1.05;margin-bottom:.8rem;}
+.cta-title strong{font-weight:700;font-style:normal;}
+.cta-sub{font-size:.82rem;color:rgba(255,255,255,.55);max-width:480px;margin:0 auto;line-height:1.85;}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;align-items:center;justify-content:space-between;padding:3rem 4rem;border-top:1px solid var(--border);}
+.bottom-nav-link{font-family:'Space Mono',monospace;font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;transition:color .2s;}
+.bottom-nav-link:hover{color:var(--ink);}
+.bottom-nav-center{font-family:'Space Mono',monospace;font-size:.46rem;letter-spacing:.18em;text-transform:uppercase;color:rgba(160,136,128,.4);}
+
+@media(max-width:900px){
+  nav{padding:1.4rem 1.5rem;}
+  .hero-logo-badge{display:none;}
+  .hero-content{grid-template-columns:1fr;padding:0 1.5rem 3.5rem;}
+  .section,.wire-section-inner{padding:5rem 1.5rem;}
+  .two-col,.proto-grid,.decision-layout,.wire-grid,.refl-cols{grid-template-columns:1fr;gap:2rem;}
+  .screens-grid{grid-template-columns:1fr 1fr;}
+  .bottom-nav,.cta-section{padding:2rem 1.5rem;}
+}
+</style>
+</head>
+<body>
+<div id="cur"></div>
+<div class="bg"></div>
+
+<nav id="nav">
+  <a href="index.html" class="nav-logo">Jiarui <em>Yao</em></a>
+  <a href="projects.html" class="nav-back">← Back to Projects</a>
+</nav>
+
+<!-- HERO — beach photo + logo badge -->
+<section class="hero">
+  <div class="hero-img">
+    <img src="imag/project/08-hero.png" alt="Beach — travel context for Sunny Packing Lists" id="heroImg"
+         onerror="this.parentElement.style.background='linear-gradient(160deg,#8ab8c0 0%,#a0c4c2 40%,#b8d4dc 100%)';this.remove();">
+  </div>
+  <div class="hero-overlay"></div>
+
+  <!-- Floating logo badge -->
+  <div class="hero-logo-badge">
+    <img src="imag/project/08-logo.png" alt="Sunny Packing Lists — Logo"
+         onerror="this.style.display='none'">
+  </div>
+
+  <div class="hero-content">
+    <div>
+      <div class="hero-label">Project 08 · UX Design · Figma · IxD Behaviours P3 · Winter 2025</div>
+      <h1 class="hero-title">Sunny<br><em>Packing Lists</em></h1>
+      <p class="hero-sub">A smart travel packing app — weather-aware, category-driven, traveller-first</p>
+      <div class="hero-cri">
+        <div class="hero-cri-row"><span class="hero-cri-label">Context</span><span class="hero-cri-text">Travellers consistently forget items when packing — especially when weather at the destination is uncertain. Existing apps treat packing as a simple to-do list, missing the environmental dimension.</span></div>
+        <div class="hero-cri-row"><span class="hero-cri-label">Role</span><span class="hero-cri-text">Sole UX designer — research, information architecture, paper prototypes (6 screens), digital wireframes (5 screens), and UI design system.</span></div>
+        <div class="hero-cri-row"><span class="hero-cri-label">Impact</span><span class="hero-cri-text">A packing app that integrates 7-day weather forecasts, categorised item picking, and cross-list item copying — so you only build your perfect list once.</span></div>
+      </div>
+    </div>
+    <div class="hero-meta">
+      <div class="hero-params">
+        <strong>Tool</strong> &nbsp;Figma · Pen &amp; Paper<br>
+        <strong>Course</strong> IxD Behaviours · P3<br>
+        <strong>Year</strong> &nbsp;Winter 2025<br>
+        <strong>Type</strong> &nbsp;Individual Project<br>
+        <strong>Output</strong> Paper + Digital Prototype
+      </div>
+      <a href="https://yaojiar.phoenix.sheridanc.on.ca/Jiarui_Yao_IXD_Behaviours_Project3/" target="_blank"
+         style="display:inline-flex;align-items:center;gap:.5rem;margin-top:1.2rem;font-family:'DM Sans',sans-serif;font-size:.62rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:#fff;text-decoration:none;border:1px solid rgba(200,230,228,.45);padding:.65rem 1.4rem;position:relative;overflow:hidden;transition:border-color .3s;background:rgba(0,109,107,.3);">
+        <span>View Live Project</span>
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+  </div>
+  <div class="hero-scroll"><span>Read Case Study</span><div class="hero-scroll-line"></div></div>
+</section>
+
+
+<!-- CONCEPT -->
+<div class="concept-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Design Concept</div>
+    <p class="concept-quote">Pack once. Pack right. Let the weather decide the rest.</p>
+    <div class="two-col">
+      <div>
+        <div class="col-label">The Problem</div>
+        <p class="col-body">Every traveller has stood at a hotel wardrobe and thought: "I should have packed a sweater." The problem isn't forgetfulness — it's that packing happens at home, in a different climate, without real information about the destination.</p>
+        <p class="col-body">Most packing apps are blank lists. They offer no intelligence about what you actually need for where you're going and when. The weather is the most critical variable in any packing decision — and it was completely absent from the apps available.</p>
+      </div>
+      <div>
+        <div class="col-label">The Solution</div>
+        <p class="col-body">Sunny Packing Lists integrates a live 7-day weather forecast directly into the packing flow. Before you choose items, you know whether it will be sunny and 29°C, or rainy and 10°C. The weather is not a separate feature — it is part of the packing decision itself.</p>
+        <p class="col-body">Beyond weather: categorised item picking (Essentials / Accessories / Baby / Clothing), custom item creation with notes, and the ability to copy items from previous lists — so each trip builds on the last rather than starting from zero.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- 5 KEY SCREENS -->
+<div class="section" data-reveal>
+  <div class="s-label">Information Architecture</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+    Five screens.<br><em style="font-style:italic;font-weight:300;color:var(--teal);">Every decision covered.</em>
+  </h2>
+  <p style="font-size:.82rem;line-height:1.9;color:var(--muted);max-width:620px;margin:.8rem 0 0;">The IA was designed around the natural sequence of a packing session: Orient → Create → Populate → Verify weather → Export.</p>
+  <div class="screens-grid">
+    <div class="screen-card">
+      <div class="screen-num">Screen 01</div>
+      <div class="screen-title">Home</div>
+      <p class="screen-body">Lists overview with "Create new list" CTA. All existing lists visible at a glance. Entry point for returning users.</p>
+    </div>
+    <div class="screen-card">
+      <div class="screen-num">Screen 02</div>
+      <div class="screen-title">Create List</div>
+      <p class="screen-body">Pick items from curated categories, create custom categories, and download the finalised list. Pack / Weather tab navigation.</p>
+    </div>
+    <div class="screen-card">
+      <div class="screen-num">Screen 03</div>
+      <div class="screen-title">Pick Items</div>
+      <p class="screen-body">Expandable category accordion (Essentials, Accessories, Baby, Clothing). Checkmark each item, add quantities. Your custom items appear in a separate section.</p>
+    </div>
+    <div class="screen-card">
+      <div class="screen-num">Screen 04</div>
+      <div class="screen-title">Weather</div>
+      <p class="screen-body">Integrated 7-day forecast for the destination. "Research Place" deep-link for local info. Today + Monday + Tuesday shown with high/low temperature and condition icons.</p>
+    </div>
+    <div class="screen-card">
+      <div class="screen-num">Screen 05</div>
+      <div class="screen-title">Create Your Items</div>
+      <p class="screen-body">Custom item builder with Name and Comment fields. Two paths: select from Suggested Items library, or create from scratch. Items carry across future lists.</p>
+    </div>
+  </div>
+</div>
+
+
+<!-- PAPER PROTOTYPES -->
+<div class="proto-bg">
+  <div class="section" data-reveal>
+    <div class="s-label">Paper Prototypes</div>
+    <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+      6 screens. 7 flows.<br><em style="font-style:italic;font-weight:300;color:var(--teal);">Drawn before a pixel was placed.</em>
+    </h2>
+    <p style="font-size:.82rem;line-height:1.9;color:var(--muted);max-width:620px;margin:.8rem 0 2rem;">Every interaction was mapped on paper first — navigating between screens, unlocking new features, and discovering the edge case of "Copy items from another list" before any digital tool was opened.</p>
+
+    <div class="proto-grid">
+      <div>
+        <div class="proto-img-wrap">
+          <!-- Paper prototype flow 1: Home → Create List → Pick Items -->
+          <div style="background:#f5f2ee;padding:2rem;display:flex;align-items:center;justify-content:center;min-height:300px;">
+            <div style="text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;">Flow 1–3</div>
+              <div style="font-family:'Cormorant',serif;font-size:1.8rem;font-style:italic;font-weight:300;color:var(--ink);">Home → Create List → Pick Items</div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:1.8;">Click "My First Packing List" → page 2<br>Click "Pick items from List" → page 3<br>Back Home Page navigation mapped</div>
+            </div>
+          </div>
+          <div class="proto-caption">Flow 01–03 · Hand-drawn · 3-screen navigation sequence</div>
+        </div>
+      </div>
+      <div>
+        <div class="proto-img-wrap">
+          <!-- Paper prototype flow 4: Create your items / Pick items expanded -->
+          <div style="background:#f5f2ee;padding:2rem;display:flex;align-items:center;justify-content:center;min-height:300px;">
+            <div style="text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;">Flow 4–6</div>
+              <div style="font-family:'Cormorant',serif;font-size:1.8rem;font-style:italic;font-weight:300;color:var(--ink);">Create Items → Full List → Items</div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:1.8;">Unlock "Create your items" panel<br>Suggested Items vs. Create Your Items<br>Category accordion expand / collapse</div>
+            </div>
+          </div>
+          <div class="proto-caption">Flow 04–06 · Hand-drawn · Category unlock sequence</div>
+        </div>
+      </div>
+      <div>
+        <div class="proto-img-wrap">
+          <div style="background:#f5f2ee;padding:2rem;display:flex;align-items:center;justify-content:center;min-height:280px;">
+            <div style="text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;">Flow 7 · Weather</div>
+              <div style="font-family:'Cormorant',serif;font-size:1.8rem;font-style:italic;font-weight:300;color:var(--ink);">7-Day Forecast → Weather Detail</div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:1.8;">Today ↑29°C ↓10°C · Mon ↑16°C ↓-1°C<br>Click "Weather" → "Research Place" deep-link<br>Unlock 7-day extended forecast</div>
+            </div>
+          </div>
+          <div class="proto-caption">Flow 07 · Weather integration · Hand-drawn</div>
+        </div>
+      </div>
+      <div>
+        <div class="proto-img-wrap">
+          <div style="background:#f5f2ee;padding:2rem;display:flex;align-items:center;justify-content:center;min-height:280px;">
+            <div style="text-align:center;">
+              <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);margin-bottom:1rem;">Edge Case · Copy</div>
+              <div style="font-family:'Cormorant',serif;font-size:1.8rem;font-style:italic;font-weight:300;color:var(--ink);">Copy Items From Another List</div>
+              <div style="font-size:.75rem;color:var(--muted);margin-top:.8rem;line-height:1.8;">"Copy item from another list?" Yes / No<br>→ Pick items from My First Packing List<br>→ Get new packing list like page 2</div>
+            </div>
+          </div>
+          <div class="proto-caption">Edge case · Cross-list item copying · Discovered in paper phase</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- DIGITAL WIREFRAMES -->
+<div class="wire-bg">
+  <div class="wire-section-inner" data-reveal style="opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.22,1,.36,1),transform .9s cubic-bezier(.22,1,.36,1);">
+    <div class="s-label">Digital Prototype</div>
+    <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">
+      From sketch<br><em style="font-style:italic;font-weight:300;color:var(--teal);">to screen-ready wireframe.</em>
+    </h2>
+    <p style="font-size:.82rem;line-height:1.9;color:var(--muted);max-width:620px;margin:.8rem 0 0;">5 screens in Figma — login/home, category selection, full packing list, weather integration — each mapped directly from the paper prototype flows.</p>
+
+    <div class="wire-grid" style="margin-top:3rem;">
+      <div>
+        <div class="wire-img-wrap">
+          <img src="imag/project/08.png" alt="Sunny Packing Lists — Digital Prototype"
+               onerror="this.parentElement.style.minHeight='200px';this.parentElement.style.display='flex';this.parentElement.style.alignItems='center';this.parentElement.style.justifyContent='center';this.remove();">
+        </div>
+        <div class="wire-caption">Digital prototype · 5 screens · Figma wireframes</div>
+      </div>
+      <div style="display:flex;flex-direction:column;justify-content:center;gap:1.5rem;">
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;">Screen Logic</div>
+          <p style="font-size:.8rem;line-height:1.88;color:var(--ink2);">The wireframes preserve the exact navigation logic from paper: top navigation uses Pack / Weather tabs rather than a conventional header menu. This keeps the two primary contexts — your list and your destination weather — always one tap apart.</p>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;">Visual System</div>
+          <p style="font-size:.8rem;line-height:1.88;color:var(--ink2);">Sage green (#c8cdb8) as the calm background system — a neutral that doesn't compete with the checkmarks and category colours. Teal (#006d6b) for all active states and primary actions. The light beige item rows create visual rhythm in long lists without visual noise.</p>
+        </div>
+        <div>
+          <div style="font-family:'Space Mono',monospace;font-size:.5rem;letter-spacing:.2em;text-transform:uppercase;color:var(--teal);margin-bottom:.5rem;">Key Interaction</div>
+          <p style="font-size:.8rem;line-height:1.88;color:var(--ink2);">The category accordion with a ▲ unlock indicator was the critical pattern. Categories that have items added show a ▼ (unlocked); empty categories show a △ (locked). Users never need to read a label — the shape communicates the state.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- KEY DECISION -->
+<div class="section" data-reveal>
+  <div class="s-label">Key Design Decision</div>
+  <div class="decision-layout">
+    <div>
+      <h2 class="decision-title">Why weather lives<br><em>inside the list,</em><br>not beside it.</h2>
+      <p class="decision-body">The first design instinct was to make weather a separate tab — a reference you check, then go back to packing. But usability testing of the paper prototype showed that users would check weather and then forget which items it implied before returning to the list.</p>
+      <p class="decision-body">The insight: weather is not context for packing — it IS a packing input. The Pack / Weather tab structure places them as equals. A user building their Clothing category can switch to Weather mid-thought, check the forecast, and return to the exact item they were adding.</p>
+      <div class="decision-pullquote">The weather tab is not a feature. It is part of the packing decision loop — an input, not a reference.</div>
+    </div>
+    <div>
+      <div class="feature-table">
+        <div class="ft-row">
+          <div class="ft-key">Tab Structure</div>
+          <div class="ft-val">Pack / Weather at the bottom — always accessible, never buried in a menu. Two contexts, one persistent navigation.</div>
+        </div>
+        <div class="ft-row">
+          <div class="ft-key">Copy Logic</div>
+          <div class="ft-val">Cross-list copying was discovered in the paper phase as an edge case, then promoted to a core feature. Build your perfect list once; every trip after is a copy + adjust.</div>
+        </div>
+        <div class="ft-row">
+          <div class="ft-key">Download</div>
+          <div class="ft-val">A download button appears once the list has items — shareable as a document for travel companions, or printed for offline use.</div>
+        </div>
+        <div class="ft-row">
+          <div class="ft-key">Category Lock</div>
+          <div class="ft-val">Categories are locked until activated. This reduces overwhelm on first use — you only see as much complexity as you choose to unlock.</div>
+        </div>
+        <div class="ft-row">
+          <div class="ft-key">Custom Items</div>
+          <div class="ft-val">Name + Comment fields. The comment stores the "why" — "medication (morning only)" is as important as the item name for medical essentials.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- REFLECTION -->
+<div class="section" data-reveal style="padding-top:0;">
+  <div class="s-label">Reflection</div>
+  <h2 style="font-family:'Cormorant',serif;font-size:clamp(1.8rem,3.5vw,3rem);font-weight:700;letter-spacing:-.02em;color:var(--ink);margin-bottom:.5rem;">What I learned</h2>
+  <div class="refl-cols">
+    <div>
+      <div class="refl-title" style="font-family:'Cormorant',serif;">UX Design</div>
+      <ul class="refl-list">
+        <li>Paper prototyping before Figma is not a slower process — it is a faster process for discovering edge cases. The "copy from another list" feature only emerged because drawing forced the question: what happens the second time you use this?</li>
+        <li>Weather integration changed the entire value proposition of the app. Without it, it's a to-do list. With it, it's a travel tool.</li>
+        <li>The category lock/unlock pattern reduces cognitive load on first use dramatically. Users should be able to start with the simplest path and expand as their needs grow.</li>
+        <li>Navigation as context: Pack / Weather tabs as equals — not hierarchy — was the key structural insight of the project.</li>
+      </ul>
+    </div>
+    <div>
+      <div class="refl-title" style="font-family:'Cormorant',serif;">Process</div>
+      <ul class="refl-list">
+        <li>6 paper screens mapped 7 distinct user flows — proving that good IA means fewer screens, not more.</li>
+        <li>The Comment field in custom items started as an "optional extra" and became a critical feature when thinking about medical and baby items where context matters as much as the item name.</li>
+        <li>The app name "Sunny" (my English name) makes the brand personal — not just a product name but a statement of authorship. Design as signature.</li>
+        <li>Next: user testing with actual travellers, and building the working prototype in JavaScript with a real weather API — the Ontario Weather App (Project 07) proved the technical stack is achievable.</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+<div class="cta-section">
+  <div class="cta-label">Project 08 · IxD Behaviours</div>
+  <h2 class="cta-title"><strong>Sunny Packing Lists.</strong><br>Pack once. Pack right.</h2>
+  <p class="cta-sub">A weather-aware packing app designed from first principles — paper prototype to digital wireframe — for the traveller who wants to leave without forgetting anything.</p>
+  <a href="https://yaojiar.phoenix.sheridanc.on.ca/Jiarui_Yao_IXD_Behaviours_Project3/" target="_blank"
+     style="display:inline-flex;align-items:center;gap:.6rem;margin-top:2.5rem;font-family:'DM Sans',sans-serif;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;font-weight:500;color:var(--teal);background:rgba(255,255,255,.9);text-decoration:none;padding:1rem 2.8rem;transition:background .28s;">
+    View Live Project
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+  </a>
+</div>
+
+<div class="bottom-nav">
+  <a href="projects.html" class="bottom-nav-link">← All Projects</a>
+  <span class="bottom-nav-center">Project 08 · Jiarui Yao · Winter 2025</span>
+  <a href="case-study-sound-of-melting.html" class="bottom-nav-link">Next: Sound of Melting →</a>
+</div>
+
+<script>
+(function(){function b(){const y=window.scrollY,m=document.body.scrollHeight-window.innerHeight;document.documentElement.style.setProperty('--scroll',y);document.documentElement.style.setProperty('--scroll-p',m>0?y/m:0);}window.addEventListener('scroll',b,{passive:true});b();})();
+const cur=document.getElementById('cur');
+document.addEventListener('mousemove',e=>{cur.style.left=e.clientX+'px';cur.style.top=e.clientY+'px';});
+document.querySelectorAll('a,button').forEach(el=>{el.addEventListener('mouseenter',()=>cur.style.transform='translate(-50%,-50%) scale(2.2)');el.addEventListener('mouseleave',()=>cur.style.transform='translate(-50%,-50%) scale(1)');});
+window.addEventListener('scroll',()=>document.getElementById('nav').classList.toggle('scrolled',scrollY>40),{passive:true});
+const hi=document.getElementById('heroImg');if(hi){hi.complete?setTimeout(()=>hi.classList.add('loaded'),100):hi.addEventListener('load',()=>hi.classList.add('loaded'));}
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});},{threshold:0.08,rootMargin:'0px 0px -50px 0px'});
+document.querySelectorAll('[data-reveal]').forEach(el=>obs.observe(el));
+(function(){const v=document.createElement('div');Object.assign(v.style,{position:'fixed',inset:'0',zIndex:'99999',background:'#f2ebe0',transformOrigin:'top center',transform:'translateY(0)',transition:'transform 0.72s cubic-bezier(0.76,0,0.24,1)',pointerEvents:'none'});const s=document.createElement('div');Object.assign(s.style,{position:'absolute',inset:'0',background:'linear-gradient(135deg,rgba(200,205,184,.2) 0%,transparent 45%,rgba(184,212,220,.15) 100%)'});v.appendChild(s);document.body.prepend(v);v.getBoundingClientRect();requestAnimationFrame(()=>requestAnimationFrame(()=>{v.style.transform='translateY(-100%)'}));let n=false;document.addEventListener('click',e=>{const a=e.target.closest('a[href]');if(!a||n)return;const h=a.getAttribute('href');if(!h||h==='#'||h.startsWith('#')||h.startsWith('http')||a.target==='_blank')return;e.preventDefault();n=true;v.style.transition='transform 0.58s cubic-bezier(0.76,0,0.24,1)';v.style.transform='translateY(0)';setTimeout(()=>{window.location.href=h;},580);});})();
+</script>
+</body>
+</html>
