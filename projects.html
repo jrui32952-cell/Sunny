@@ -48,6 +48,24 @@
 			cursor: none;
 		}
 
+		a:focus-visible,
+		button:focus-visible {
+			outline: 2px solid #984653;
+			outline-offset: 4px;
+		}
+
+		.sr-only {
+			position: absolute;
+			width: 1px;
+			height: 1px;
+			padding: 0;
+			margin: -1px;
+			overflow: hidden;
+			clip: rect(0, 0, 0, 0);
+			white-space: nowrap;
+			border: 0;
+		}
+
 		/* grain */
 		body::after {
 			content: '';
@@ -766,6 +784,20 @@
 			}
 		}
 
+		@media (hover: none), (pointer: coarse) {
+			body { cursor: auto; }
+			#cur, .sphere { display: none; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after {
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+			}
+			#cur, .sphere { display: none; }
+		}
+
 	</style>
 </head>
 
@@ -785,6 +817,7 @@
 			Home
 		</a>
 	</header>
+	<h1 class="sr-only">Selected Projects</h1>
 
 	<!-- ══ CATEGORY WATERMARK (fixed in right panel) ══ -->
 	<div class="cat-watermark" id="cat-watermark">01</div>
@@ -933,7 +966,7 @@
 						hiTags: ['Projection Mapping'],
 						media: {
 							type: 'video',
-							src: 'imag/project/11.MP4'
+							src: 'imag/project/11.mp4'
 						},
 						caseStudy: 'case-study-surface.html',
 					},
@@ -1180,7 +1213,7 @@
 						hiTags: ['Leadership'],
 						media: {
 							type: 'image',
-							src: 'imag/project/cssa.jpg'
+							src: 'imag/project/cssa.JPG'
 						},
 					},
 				],
@@ -1233,7 +1266,7 @@
       <div class="pcard-ph-type" style="color:${m.color || 'rgba(255,255,255,.5)'};">${m.typeLabel || ''}</div>
     `;
 				if (proj.extLink) {
-					ph.innerHTML += `<a href="${proj.extLink}" target="_blank" class="pcard-ph-action" style="color:${m.color || 'rgba(255,255,255,.6)'};">
+					ph.innerHTML += `<a href="${proj.extLink}" target="_blank" rel="noopener noreferrer" class="pcard-ph-action" style="color:${m.color || 'rgba(255,255,255,.6)'};">
         Open Live
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>`;
@@ -1428,7 +1461,7 @@
       </a>`;
 				}
 				if (proj.extLink) {
-					ctaHTML += `<a href="${proj.extLink}" target="_blank" class="sp-btn-ghost">
+					ctaHTML += `<a href="${proj.extLink}" target="_blank" rel="noopener noreferrer" class="sp-btn-ghost">
         Open Live
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>`;

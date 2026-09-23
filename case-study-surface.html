@@ -9,7 +9,7 @@
 <style>
 :root{
   --cream:#f2ebe0;--blush:#e8a8b0;--peach:#f2c89a;--wing:#b8cce0;
-  --lilac:#d8c0d8;--ink:#2a1f1a;--ink2:#5a4840;--muted:#a08880;
+  --lilac:#d8c0d8;--ink:#2a1f1a;--ink2:#5a4840;--muted:#75645d;
   --border:rgba(200,176,168,.18);--glass:rgba(242,235,224,.72);
   /* Project accent — winter ice */
   --ice:#c8dff0;--night:#1a2535;--frost:rgba(200,223,240,.15);
@@ -22,6 +22,7 @@ body::after{content:'';position:fixed;inset:0;z-index:9998;pointer-events:none;o
 .bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse 70% 60% at 20% 0%,rgba(184,204,224,.35) 0%,transparent 55%),radial-gradient(ellipse 60% 50% at 90% 40%,rgba(216,192,216,.22) 0%,transparent 55%),radial-gradient(ellipse 55% 50% at 50% 100%,rgba(200,220,240,.2) 0%,transparent 55%);background-color:var(--cream);}
 
 #cur{width:7px;height:7px;background:var(--wing);border-radius:50%;position:fixed;top:0;left:0;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);mix-blend-mode:multiply;transition:transform .15s;}
+a:focus-visible,button:focus-visible{outline:2px solid #587493;outline-offset:4px;}
 
 /* NAV */
 nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1.8rem 4rem;transition:background .4s;}
@@ -142,6 +143,8 @@ nav.scrolled{background:rgba(242,235,224,.88);backdrop-filter:blur(20px);border-
   .tool-grid{grid-template-columns:1fr 1fr;}
   .bottom-nav,.cta-section{padding:2rem 1.5rem;}
 }
+@media(hover:none),(pointer:coarse){body{cursor:auto;}#cur{display:none;}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto;}*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}#cur{display:none;}.section{opacity:1;transform:none;}}
 </style>
 </head>
 <body>
