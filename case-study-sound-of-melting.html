@@ -18,7 +18,7 @@
   --lilac: #d8c0d8;
   --ink:   #2a1f1a;
   --ink2:  #5a4840;
-  --muted: #a08880;
+  --muted: #75645d;
   --border: rgba(200,176,168,.18);
 
   /* Project accent — ice · mist · blush */
@@ -40,6 +40,12 @@ body {
   color: var(--ink);
   overflow-x: hidden;
   cursor: none;
+}
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid #984653;
+  outline-offset: 4px;
 }
 
 /* Film grain */
@@ -719,6 +725,21 @@ nav.scrolled {
   .bottom-nav { padding: 2rem 1.5rem; }
   .cta-section { padding: 5rem 1.5rem; }
 }
+
+@media (hover: none), (pointer: coarse) {
+  body { cursor: auto; }
+  #cur { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .01ms !important;
+  }
+  #cur { display: none; }
+}
 </style>
 </head>
 <body>
@@ -780,7 +801,7 @@ nav.scrolled {
         <strong>Year</strong> &nbsp;2025–2026<br>
         <strong>Type</strong> &nbsp;Individual Project
       </div>
-      <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" class="hero-live">
+      <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" rel="noopener noreferrer" class="hero-live">
         <span>View Live Project</span>
         <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
@@ -1152,7 +1173,7 @@ nav.scrolled {
     <strong>The Sound of Melting</strong><br>
     is live. Make a sound.
   </h2>
-  <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" class="cta-btn">
+  <a href="https://yaojiar.phoenix.sheridanc.on.ca/icecream3/" target="_blank" rel="noopener noreferrer" class="cta-btn">
     Open Project
     <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
   </a>
