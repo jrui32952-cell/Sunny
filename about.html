@@ -17,7 +17,7 @@
 			--lilac: #d8c0d8;
 			--ink: #2a1f1a;
 			--ink2: #5a4840;
-			--muted: #a08880;
+			--muted: #75645d;
 			--light: #c8b0a8;
 			--border: rgba(200, 176, 168, .18);
 			--glass-bg: rgba(255, 252, 248, .64);
@@ -44,6 +44,12 @@
 			color: var(--ink);
 			overflow-x: hidden;
 			cursor: none;
+		}
+
+		a:focus-visible,
+		button:focus-visible {
+			outline: 2px solid #984653;
+			outline-offset: 4px;
 		}
 
 		body::after {
@@ -1334,6 +1340,21 @@
 			}
 		}
 
+		@media (hover: none), (pointer: coarse) {
+			body { cursor: auto; }
+			#cur, .sphere { display: none; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			html { scroll-behavior: auto; }
+			*, *::before, *::after {
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+			}
+			#cur, .sphere { display: none; }
+		}
+
 	</style>
 </head>
 
@@ -1350,7 +1371,7 @@
 			<li><a href="about.html" class="active">About</a></li>
 			<li><a href="projects.html">Projects</a></li>
 		</ul>
-		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" download class="nav-resume">Resume ↗</a>
+		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" rel="noopener noreferrer" download class="nav-resume">Resume ↗</a>
 	</nav>
 
 	<!-- ── HERO ── -->
@@ -1359,11 +1380,11 @@
 			<div class="hero-inner">
 				<div>
 					<div class="m-label">Personal Manifesto</div>
-					<div class="manifesto">
+					<h1 class="manifesto">
 						<span class="m1">Tidy yourself up.</span>
 						<span class="m2">Whatever came today —</span>
 						<span class="m3">tomorrow gets another try.</span>
-					</div>
+					</h1>
 					<div class="m-rule"></div>
 					<p class="m-bio">
 						I'm <strong>Jiarui (Sunny) Yao</strong> — a third-year Interaction Design student at Sheridan College in Oakville. I design things that make people feel something: a voice-driven ice cream that changes when you speak, a body-powered installation that reveals chronic stress, and projected experiences that transform architecture.<br><br>
@@ -1569,7 +1590,7 @@
 						<div class="cta-btns">
 							<a href="/cdn-cgi/l/email-protection#284241495a5d4106514947685b404d5a414c49464b4744444d4f4d064b49" class="btn-fill">Say Hello</a>
 							<a href="projects.html" class="btn-ghost">View My Work</a>
-							<a href="https://linkedin.com/in/jiarui-yao-27b48033a" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+							<a href="https://linkedin.com/in/jiarui-yao-27b48033a" target="_blank" rel="noopener noreferrer" class="btn-ghost">LinkedIn ↗</a>
 						</div>
 					</div>
 				</div>
