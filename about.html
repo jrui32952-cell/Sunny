@@ -17,7 +17,7 @@
 			--lilac: #d8c0d8;
 			--ink: #2a1f1a;
 			--ink2: #5a4840;
-			--muted: #a08880;
+			--muted: #75645d;
 			--light: #c8b0a8;
 			--border: rgba(200, 176, 168, .18);
 			--glass-bg: rgba(255, 252, 248, .64);
@@ -44,6 +44,12 @@
 			color: var(--ink);
 			overflow-x: hidden;
 			cursor: none;
+		}
+
+		a:focus-visible,
+		button:focus-visible {
+			outline: 2px solid #984653;
+			outline-offset: 4px;
 		}
 
 		body::after {
@@ -1334,6 +1340,21 @@
 			}
 		}
 
+		@media (hover: none), (pointer: coarse) {
+			body { cursor: auto; }
+			#cur, .sphere { display: none; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			html { scroll-behavior: auto; }
+			*, *::before, *::after {
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+			}
+			#cur, .sphere { display: none; }
+		}
+
 	</style>
 </head>
 
@@ -1350,7 +1371,7 @@
 			<li><a href="about.html" class="active">About</a></li>
 			<li><a href="projects.html">Projects</a></li>
 		</ul>
-		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" download class="nav-resume">Resume ↗</a>
+		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" rel="noopener noreferrer" download class="nav-resume">Resume ↗</a>
 	</nav>
 
 	<!-- ── HERO ── -->
@@ -1359,14 +1380,14 @@
 			<div class="hero-inner">
 				<div>
 					<div class="m-label">Personal Manifesto</div>
-					<div class="manifesto">
+					<h1 class="manifesto">
 						<span class="m1">Tidy yourself up.</span>
 						<span class="m2">Whatever came today —</span>
 						<span class="m3">tomorrow gets another try.</span>
-					</div>
+					</h1>
 					<div class="m-rule"></div>
 					<p class="m-bio">
-						I'm <strong>Jiarui (Sunny) Yao</strong> — an Interaction Designer in my second year at Sheridan College, Oakville. I design things that make people feel something: a voice-driven ice cream that melts when you shout at it, a city map you can hold in your hands, a landing page that changes your mind before you realise it happened.<br><br>
+						I'm <strong>Jiarui (Sunny) Yao</strong> — a third-year Interaction Design student at Sheridan College in Oakville. I design things that make people feel something: a voice-driven ice cream that changes when you speak, a body-powered installation that reveals chronic stress, and projected experiences that transform architecture.<br><br>
 						I believe the best design is quiet until it isn't. And I believe in showing up the next day.
 					</p>
 				</div>
@@ -1402,7 +1423,7 @@
 					<div class="gc-inner">
 						<div class="c-label">Who I am</div>
 						<div class="c-name">Interaction <em>Designer</em><br>&amp; Creative Technologist</div>
-						<div class="c-role">Sheridan College · Oakville, ON · Year 2</div>
+						<div class="c-role">Sheridan College · Oakville, ON · Year 3</div>
 						<p class="c-desc">I work at the junction of <strong>sensory design, computation, and craft</strong> — where a project might begin in Figma and end with a laser cutter, a P5.js canvas, or a TouchDesigner installation. Fluent in both Mandarin and English, I bring that duality into how I research, communicate, and build.</p>
 						<div class="tag-row">
 							<span class="tag hi">Interaction Design</span>
@@ -1419,10 +1440,10 @@
 				<!-- ③ STAT — narrow right column -->
 				<div class="gc gc-stat reveal d3">
 					<div class="gc-inner">
-						<div class="c-label">Years</div>
+						<div class="c-label">Practice</div>
 						<div class="stat-big">
-							<div class="ps-val">6+</div>
-							<div class="ps-key">AI-integrated<br>workflow</div>
+							<div class="ps-val">3</div>
+							<div class="ps-key">digital · physical<br>· spatial</div>
 						</div>
 					</div>
 				</div>
@@ -1432,8 +1453,8 @@
 					<div class="park-bg"></div>
 					<div class="gc-inner">
 						<div class="c-label">Design Philosophy</div>
-						<p class="phil-q">The best interfaces are <strong>quiet until they aren't.</strong> I design for the moment a person stops noticing the design — and starts feeling something instead.</p>
-						<p class="phil-footer">Medium and message are inseparable. Every pixel, every pause, every word is a decision — and decisions make character.</p>
+						<p class="phil-q">I believe interaction design should make invisible systems understandable through <strong>experience, not explanation alone.</strong> An interface should recede when a task needs clarity, then become expressive when emotion, curiosity, or reflection can deepen the experience. I work across screens, physical objects, and spatial media because the right form should follow how people need to understand and act—not the boundaries of a single tool.</p>
+						<p class="phil-footer">In <em>Hypercortisolism</em>, the participant's body completes a circuit before information about chronic stress appears. In <em>The Sound of Melting</em>, voice becomes a physical force that changes digital material. Both projects turn abstract systems into something people can feel, test, and remember. That is the work I want to keep doing: translating complexity into interactions that are clear, embodied, and meaningful.</p>
 					</div>
 					<span class="c-num">✦</span>
 				</div>
@@ -1543,17 +1564,16 @@
 					<span class="c-num">04</span>
 				</div>
 
-				<!-- ⑩ AI WORKFLOW -->
+				<!-- ⑩ AI USE DISCLOSURE -->
 				<div class="gc gc-ai gc-wing reveal d6">
 					<div class="gc-inner">
 						<div class="ai-spark">✦</div>
-						<div class="c-label">AI Workflow</div>
-						<div class="ai-heading">How I work <em>with AI</em></div>
-						<p class="ai-body"><strong>6+ years of AI-integrated workflow</strong> — I use AI not as a shortcut but as a collaborator. I know which tool to reach for, and more importantly, when to put them all down and think.</p>
+						<div class="c-label">AI Use Disclosure</div>
+						<div class="ai-heading">Support, <em>not authorship</em></div>
+						<p class="ai-body">Generative AI supported brainstorming, copy editing, and code refinement for this portfolio. <strong>Project concepts, process evidence, visual direction, and final design decisions are my own.</strong></p>
 						<div class="ai-chips">
-							<span class="chip hi">Claude API</span><span class="chip hi">ChatGPT / GPT-4</span>
-							<span class="chip hi">Cursor IDE</span><span class="chip">DeepSeek</span>
-							<span class="chip">豆包</span><span class="chip">可灵</span>
+							<span class="chip hi">Brainstorming</span><span class="chip hi">Copy Editing</span>
+							<span class="chip hi">Code Assistance</span><span class="chip">Prototyping</span>
 						</div>
 					</div>
 					<span class="c-num">05</span>
@@ -1564,12 +1584,12 @@
 					<div class="gc-inner">
 						<div class="cta-left">
 							<h2>Let's make something <em>unforgettable.</em></h2>
-							<p>Open to design internships, creative collaborations, and AI-powered project partnerships. Fluent in Mandarin and English.</p>
+							<p>Open to design internships, creative technology collaborations, and spatial experience projects. Fluent in Mandarin and English.</p>
 						</div>
 						<div class="cta-btns">
 							<a href="/cdn-cgi/l/email-protection#284241495a5d4106514947685b404d5a414c49464b4744444d4f4d064b49" class="btn-fill">Say Hello</a>
 							<a href="projects.html" class="btn-ghost">View My Work</a>
-							<a href="https://linkedin.com/in/jiarui-yao-27b48033a" target="_blank" class="btn-ghost">LinkedIn ↗</a>
+							<a href="https://linkedin.com/in/jiarui-yao-27b48033a" target="_blank" rel="noopener noreferrer" class="btn-ghost">LinkedIn ↗</a>
 						</div>
 					</div>
 				</div>
