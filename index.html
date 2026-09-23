@@ -19,7 +19,7 @@
 			--lilac: #d8c0d8;
 			--ink: #2a1f1a;
 			--ink2: #5a4840;
-			--muted: #a08880;
+			--muted: #75645d;
 			--scroll: 0;
 			--scroll-p: 0;
 		}
@@ -44,6 +44,12 @@
 			color: var(--ink);
 			overflow-x: hidden;
 			cursor: none;
+		}
+
+		a:focus-visible,
+		button:focus-visible {
+			outline: 2px solid #984653;
+			outline-offset: 4px;
 		}
 
 		/* ── Film grain ── */
@@ -863,6 +869,21 @@
 			}
 		}
 
+		@media (hover: none), (pointer: coarse) {
+			body { cursor: auto; }
+			#cur, .sphere { display: none; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			html { scroll-behavior: auto; }
+			*, *::before, *::after {
+				animation-duration: .01ms !important;
+				animation-iteration-count: 1 !important;
+				transition-duration: .01ms !important;
+			}
+			#cur, .sphere { display: none; }
+		}
+
 	</style>
 </head>
 
@@ -885,7 +906,7 @@
 			<li><a href="about.html">About</a></li>
 			<li><a href="projects.html">Projects</a></li>
 		</ul>
-		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" download class="nav-resume">Resume ↗</a>
+		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" rel="noopener noreferrer" download class="nav-resume">Resume ↗</a>
 	</nav>
 
 	<!-- ══ HERO ══ -->
@@ -899,10 +920,10 @@
 		</div>
 		<div class="side-text">
 			<p class="hero-kicker">Jiarui Yao</p>
-			<div class="name">
+			<h1 class="name">
 				<span class="n1">Interaction Designer</span>
 				<span class="n2">&amp; Creative Technologist</span>
-			</div>
+			</h1>
 			<div class="rule"></div>
 			<p class="tagline">Working across digital products, physical interfaces,<br>and spatial experiences.</p>
 			<p class="hero-intro">I turn complex ideas and systems into clear, engaging interactions—from experimental prototypes to real-world products.</p>
