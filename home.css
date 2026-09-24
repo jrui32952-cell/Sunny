@@ -488,6 +488,9 @@ nav.scrolled {
   /* initial state for lens-zoom — transitions.js animates this */
 }
 
+/* The Hypercortisolism artwork retains its original contrast. */
+.hs-card-img--hypercortisolism::after { display: none; }
+
 /* Gradient overlay on image */
 .hs-card-img::after {
   content: '';
