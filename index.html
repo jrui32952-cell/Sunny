@@ -884,6 +884,55 @@
 			#cur, .sphere { display: none; }
 		}
 
+	
+		/* SUNNY V2 · sunset coral, blue white, slate navy */
+		:root{--cream:#f3f8fa;--blush:#f26442;--peach:#ffc77e;--wing:#d8e8f1;--lilac:#e7eef2;--ink:#243b4b;--ink2:#415b69;--muted:#637987;--sunset:#f26442;--paper:#fffdf9}
+		body{cursor:auto;background:var(--cream);color:var(--ink)}
+		body::after{opacity:.025;animation:none}
+		.bg{background:radial-gradient(circle at 77% 17%,rgba(255,199,126,.22),transparent 32%),linear-gradient(145deg,#f7fafb,#eaf3f7 78%)}
+		.sphere,#scroll-indicator{display:none!important}
+		nav{background:rgba(247,250,251,.9);backdrop-filter:blur(18px);border-bottom:1px solid rgba(36,59,75,.12)}
+		.nav-resume,.btn-fill{background:var(--sunset)!important;color:#fff!important}
+		.v2-hero{min-height:100svh;padding:clamp(110px,12vw,160px) clamp(22px,6vw,100px) 48px;display:grid;grid-template-columns:minmax(320px,.9fr) minmax(420px,1.1fr);gap:3vw;align-items:center;position:relative;isolation:isolate;max-width:1620px;margin:auto}
+		.v2-head{position:relative;z-index:4;align-self:center;padding-bottom:50px}
+		.v2-eyebrow{display:flex;align-items:center;gap:12px;font-family:'Space Mono',monospace;font-size:clamp(10px,1vw,13px);letter-spacing:.11em;font-weight:400;color:var(--ink2);margin-bottom:38px}
+		.v2-sun-mini{width:21px;height:21px;display:inline-block;border-radius:50%;background:var(--sunset);box-shadow:0 0 0 5px rgba(242,100,66,.12)}
+		.v2-head h1{font-family:'Cormorant',Georgia,serif;font-size:clamp(62px,7.3vw,122px);line-height:.88;letter-spacing:-.055em;font-weight:600;max-width:800px;margin:0 0 30px;color:var(--ink)}
+		.v2-head h1 em{font-weight:400;color:var(--sunset);display:inline-block;position:relative;animation:v2-assemble 1s both cubic-bezier(.2,.8,.2,1)}
+		@keyframes v2-assemble{from{letter-spacing:.055em;opacity:.25;transform:translateX(18px)}to{letter-spacing:-.055em;opacity:1;transform:translateX(0)}}
+		.v2-intro{max-width:490px;font-size:clamp(15px,1.25vw,19px);line-height:1.65;color:var(--ink2);font-weight:400}
+		.v2-cta{display:flex;align-items:center;gap:26px;margin-top:33px;flex-wrap:wrap}
+		.v2-button{border-radius:50px;padding:15px 22px;background:var(--sunset);color:white;text-decoration:none;font-size:14px;font-weight:500;transition:transform .2s,background .2s}
+		.v2-button:hover{transform:translateY(-3px);background:#d85034}
+		.v2-button span{padding-left:15px}
+		.v2-subtle{text-decoration:none;color:var(--ink);font-size:14px;border-bottom:1px solid var(--ink);padding-bottom:4px}
+		.v2-collage{position:relative;height:min(660px,68vw);min-height:550px;max-width:700px;width:100%;justify-self:center}
+		.v2-orbit{position:absolute;width:77%;aspect-ratio:1;border-radius:50%;left:11%;top:10%;background:radial-gradient(circle at 33% 25%,#ffdc9b 0%,#fa9a61 36%,#f26442 72%);box-shadow:0 0 0 24px rgba(242,100,66,.08);z-index:0}
+		.v2-portrait{position:absolute;left:22%;top:10%;width:57%;height:77%;border-radius:48% 48% 43% 43%;overflow:hidden;z-index:1;filter:grayscale(1) contrast(1.1);border:5px solid var(--paper)}
+		.v2-portrait img{width:100%;height:100%;object-fit:cover;object-position:center top}
+		.v2-tag{position:absolute;z-index:3;background:var(--ink);color:white;border-radius:50px;padding:8px 12px;letter-spacing:.05em;font:400 clamp(9px,.83vw,12px)/1.2 'Space Mono',monospace;white-space:nowrap;box-shadow:0 6px 18px rgba(36,59,75,.14)}
+		.v2-tag-a{left:0;top:17%}.v2-tag-b{right:-1%;top:34%}.v2-tag-c{left:0;bottom:23%}
+		.v2-note{position:absolute;z-index:4;display:flex;flex-direction:column;gap:9px;width:clamp(150px,16vw,214px);min-height:130px;padding:17px 17px 16px;text-decoration:none;color:var(--ink);background:var(--paper);border:1px solid rgba(36,59,75,.12);border-radius:14px;box-shadow:3px 10px 30px rgba(36,59,75,.16);transition:transform .25s,box-shadow .25s}
+		.v2-note:hover{transform:translateY(-7px) rotate(0deg)!important;box-shadow:5px 19px 35px rgba(36,59,75,.2)}
+		.v2-note small{font:400 9px/1.3 'Space Mono',monospace;letter-spacing:.01em;color:#b94c33}
+		.v2-note strong{font:600 clamp(23px,2vw,32px)/.98 'Cormorant',Georgia,serif}
+		.v2-note span:last-child{font-size:10px;line-height:1.3}
+		.v2-pin{position:absolute;top:-8px;left:48%;width:16px;height:16px;border-radius:50%;background:var(--sunset);box-shadow:0 2px 5px #92543a55}
+		.v2-note-a{right:0;top:5%;transform:rotate(5deg)}
+		.v2-note-b{left:-2%;top:43%;transform:rotate(-5deg)}
+		.v2-note-c{right:0;bottom:0;transform:rotate(4deg)}
+		.v2-scribble{position:absolute;bottom:6%;left:24%;font:italic 26px/1 'Cormorant',Georgia,serif;color:var(--sunset);transform:rotate(-9deg)}
+		.v2-method{position:absolute;bottom:20px;left:6vw;display:flex;gap:13px;align-items:center;font:400 11px/1.4 'Space Mono',monospace;letter-spacing:.045em;color:var(--ink);flex-wrap:wrap}
+		.v2-method span:nth-child(even){color:var(--sunset);font-size:17px}
+		.v2-method p{width:100%;font:400 12px/1.4 'DM Sans',sans-serif;color:var(--muted);letter-spacing:0;margin:0}
+		.home-scroll{background:#f3f8fa}
+		.hs-card{background:#fffdf9;border-radius:20px;overflow:hidden}
+		.hs-card:hover{border-color:var(--sunset)}
+		.hs-bridge-line{background:var(--sunset)}
+		@media(max-width:900px){.v2-hero{grid-template-columns:1fr;padding:105px 6vw 55px;gap:5px}.v2-head{padding-bottom:10px}.v2-head h1{font-size:clamp(58px,10vw,96px)}.v2-collage{height:640px;min-height:0;max-width:660px}.v2-method{position:static;grid-column:1;margin-top:15px}.v2-tag-b{right:0}}
+		@media(max-width:600px){.v2-hero{padding:98px 18px 40px}.v2-head h1{font-size:clamp(52px,12vw,72px)}.v2-eyebrow{margin-bottom:25px}.v2-collage{height:480px}.v2-orbit{width:78%;left:11%;top:12%}.v2-portrait{width:60%;left:20%;height:64%;top:13%}.v2-note{width:132px;min-height:105px;padding:12px;gap:5px}.v2-note small{font-size:8px}.v2-note strong{font-size:22px}.v2-note span:last-child{font-size:9px}.v2-note-a{right:0;top:0}.v2-note-b{left:0;top:46%}.v2-note-c{right:0;bottom:0}.v2-tag{font-size:8px;padding:6px}.v2-tag-a{top:14%}.v2-tag-b{top:42%}.v2-tag-c{bottom:18%}.v2-scribble{display:none}}
+		@media(prefers-reduced-motion:reduce){.v2-head h1 em{animation:none}.v2-note{transition:none}}
+
 	</style>
 </head>
 
@@ -909,36 +958,27 @@
 		<a href="Jiarui_Yao_Resume_2026.pdf" target="_blank" rel="noopener noreferrer" download class="nav-resume">Resume ↗</a>
 	</nav>
 
-	<!-- ══ HERO ══ -->
-	<div class="home">
-		<div class="side-photo">
-			<div class="photo-wrap">
-				<div class="photo-circle">
-					<img src="imag/zizhao/banshen.png" alt="Jiarui Yao">
-				</div>
-			</div>
+	<!-- ══ HERO · SUNNY V2 ══ -->
+	<main class="v2-hero" aria-labelledby="v2-title">
+		<div class="v2-head">
+			<p class="v2-eyebrow"><span class="v2-sun-mini" aria-hidden="true"></span> JIARUI YAO · INTERACTION DESIGNER</p>
+			<h1 id="v2-title">Making complexity<br><em>make sense.</em></h1>
+			<p class="v2-intro">I reorganize layered ideas into experiences people can explore, feel, and understand—across digital products, creative code, and physical interaction.</p>
+			<div class="v2-cta"><a class="v2-button" href="#selected-work">Explore the work <span aria-hidden="true">↗</span></a><a class="v2-subtle" href="about.html">Meet Jiarui <span aria-hidden="true">→</span></a></div>
 		</div>
-		<div class="side-text">
-			<p class="hero-kicker">Jiarui Yao</p>
-			<h1 class="name">
-				<span class="n1">Interaction Designer</span>
-				<span class="n2">&amp; Creative Technologist</span>
-			</h1>
-			<div class="rule"></div>
-			<p class="tagline">Working across digital products, physical interfaces,<br>and spatial experiences.</p>
-			<p class="hero-intro">I turn complex ideas and systems into clear, engaging interactions—from experimental prototypes to real-world products.</p>
-			<div class="cta">
-				<a href="#selected-work" class="btn-fill">View Selected Work</a>
-				<a href="about.html" class="btn-text">About Me
-					<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-						<line x1="5" y1="12" x2="19" y2="12" />
-						<polyline points="12 5 19 12 12 19" />
-					</svg>
-				</a>
-			</div>
-			<p class="locale">Toronto, Canada &nbsp;·&nbsp; Interaction Design &nbsp;·&nbsp; Creative Technology</p>
+		<div class="v2-collage" aria-label="Portrait of Jiarui Yao surrounded by selected projects">
+			<div class="v2-orbit" aria-hidden="true"></div>
+			<div class="v2-portrait"><img src="imag/zizhao/banshen.png" alt="Portrait of Jiarui Yao"></div>
+			<div class="v2-tag v2-tag-a">INTERACTION DESIGNER</div>
+			<div class="v2-tag v2-tag-b">CREATIVE TECHNOLOGIST</div>
+			<div class="v2-tag v2-tag-c">INFORMATION DESIGNER</div>
+			<a class="v2-note v2-note-a" href="case-study-sound-of-melting.html"><span class="v2-pin" aria-hidden="true"></span><small>01 / SOUND → FORM</small><strong>The Sound<br>of Melting</strong><span>Voice becomes a material response ↗</span></a>
+			<a class="v2-note v2-note-b" href="case-study-hypercortisolism.html"><span class="v2-pin" aria-hidden="true"></span><small>02 / TOUCH → FEEDBACK</small><strong>Hypercortisolism</strong><span>Making stress tangible ↗</span></a>
+			<a class="v2-note v2-note-c" href="projects.html"><span class="v2-pin" aria-hidden="true"></span><small>03 / CHOICE → CLARITY</small><strong>Tinyum<br>+ COPA</strong><span>Information you can navigate ↗</span></a>
+			<div class="v2-scribble" aria-hidden="true">See it<br>differently ↘</div>
 		</div>
-	</div>
+		<div class="v2-method" aria-label="Design approach"><span>INPUT</span><span aria-hidden="true">→</span><span>RESPONSE</span><span aria-hidden="true">→</span><span>UNDERSTANDING</span><p>Touch, speak, or choose. See what changes.</p></div>
+	</main>
 
 	<!-- ══ NARRATIVE EXIT — scroll section ══ -->
 	<section class="home-scroll" id="selected-work">
